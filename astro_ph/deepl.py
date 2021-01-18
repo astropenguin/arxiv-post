@@ -104,19 +104,19 @@ def get_driver(driver: Driver = Driver.CHROME) -> WebDriver:
     """Return a webdriver for interacting with DeepL."""
     if driver == Driver.CHROME:
         options = ChromeOptions()
-        options.add_argument("--headless")
+        options.headless = True
         return Chrome(options=options)
     elif driver == Driver.CHROME_REMOTE:
         options = ChromeOptions()
-        options.add_argument("--headless")
+        options.headless = True
         return Remote(options=options)
     elif driver == Driver.FIREFOX:
         options = FirefoxOptions()
-        options.add_argument("--headless")
+        options.headless = True
         return Firefox(options=options)
     elif driver == Driver.FIREFOX_REMOTE:
         options = FirefoxOptions()
-        options.add_argument("--headless")
+        options.headless = True
         return Remote(options=options)
     elif driver == Driver.EDGE:
         return Edge()
