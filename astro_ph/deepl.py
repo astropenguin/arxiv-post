@@ -16,7 +16,7 @@ from typing_extensions import Final
 
 
 # constants
-TIMEOUT: Final[str] = 30
+TIMEOUT: Final[int] = 30
 TRANSLATION_CLASS: Final[str] = "lmt__translations_as_text__text_btn"
 TRANSLATOR_URL: Final[str] = "https://www.deepl.com/translator"
 
