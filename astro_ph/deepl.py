@@ -106,21 +106,26 @@ def get_driver(driver: Driver = Driver.CHROME) -> WebDriver:
         options = ChromeOptions()
         options.headless = True
         return Chrome(options=options)
-    elif driver == Driver.CHROME_REMOTE:
+
+    if driver == Driver.CHROME_REMOTE:
         options = ChromeOptions()
         options.headless = True
         return Remote(options=options)
-    elif driver == Driver.FIREFOX:
+
+    if driver == Driver.FIREFOX:
         options = FirefoxOptions()
         options.headless = True
         return Firefox(options=options)
-    elif driver == Driver.FIREFOX_REMOTE:
+
+    if driver == Driver.FIREFOX_REMOTE:
         options = FirefoxOptions()
         options.headless = True
         return Remote(options=options)
-    elif driver == Driver.EDGE:
+
+    if driver == Driver.EDGE:
         return Edge()
-    elif driver == Driver.SAFARI:
+
+    if driver == Driver.SAFARI:
         return Safari()
-    else:
-        raise ValueError(driver)
+
+    raise ValueError(driver)
