@@ -10,7 +10,7 @@ from urllib.parse import quote
 # third-party packages
 from selenium.webdriver import Chrome, ChromeOptions
 from selenium.webdriver import Firefox, FirefoxOptions
-from selenium.webdriver import Edge, Safari
+from selenium.webdriver import Edge, Remote, Safari
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver, WebElement
 from selenium.webdriver.support.ui import WebDriverWait
@@ -27,8 +27,10 @@ class Driver(Enum):
     """Available webdrivers for translation."""
 
     CHROME = auto()
-    EDGE = auto()
+    CHROME_REMOTE = auto()
     FIREFOX = auto()
+    FIREFOX_REMOTE = auto()
+    EDGE = auto()
     SAFARI = auto()
 
 
@@ -104,10 +106,18 @@ def get_driver(driver: Driver = Driver.CHROME) -> WebDriver:
         options = ChromeOptions()
         options.add_argument("--headless")
         return Chrome(options=options)
+    elif driver == Driver.CHROME_REMOTE:
+        options = ChromeOptions()
+        options.add_argument("--headless")
+        return Remote(options=options)
     elif driver == Driver.FIREFOX:
         options = FirefoxOptions()
         options.add_argument("--headless")
         return Firefox(options=options)
+    elif driver == Driver.FIREFOX_REMOTE:
+        options = FirefoxOptions()
+        options.add_argument("--headless")
+        return Remote(options=options)
     elif driver == Driver.EDGE:
         return Edge()
     elif driver == Driver.SAFARI:
