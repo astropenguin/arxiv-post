@@ -3,7 +3,7 @@ __all__ = ["Driver", "Language", "translate"]
 
 # standard library
 from enum import auto, Enum
-from typing import Tuple, Union
+from typing import Union
 from urllib.parse import quote
 
 
@@ -12,15 +12,16 @@ from selenium.webdriver import Chrome, ChromeOptions
 from selenium.webdriver import Firefox, FirefoxOptions
 from selenium.webdriver import Edge, Opera, Remote, Safari
 from selenium.webdriver.common.by import By
-from selenium.webdriver.remote.webdriver import WebDriver, WebElement
+from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.support.ui import WebDriverWait
 from typing_extensions import Final
 
 
 # constants
-TIMEOUT: Final[int] = 30
+TRANSLATION_ATTR: Final[str] = "textContent"
 TRANSLATION_CLASS: Final[str] = "lmt__translations_as_text__text_btn"
-TRANSLATOR_URL: Final[str] = "https://www.deepl.com/translator"
+TRANSLATION_TIMEOUT: Final[int] = 30
+TRANSLATION_URL: Final[str] = "https://www.deepl.com/translator"
 
 
 class Driver(Enum):
@@ -57,7 +58,7 @@ def translate(
     to: Language = Language.AUTO,
     from_: Language = Language.AUTO,
     driver: Driver = Driver.CHROME,
-    timeout: int = TIMEOUT,
+    timeout: int = TRANSLATION_TIMEOUT,
     **kwargs,
 ) -> str:
     """Translate a text written in a certain language to another.
@@ -74,32 +75,22 @@ def translate(
         Translated text.
 
     """
-    locator = By.CLASS_NAME, TRANSLATION_CLASS
-    url = f"{TRANSLATOR_URL}#{from_.name}/{to.name}/{quote(text)}"
+    url = f"{TRANSLATION_URL}#{from_.name}/{to.name}/{quote(text)}"
 
     with get_driver(driver, **kwargs) as driver:
         driver.get(url)
         wait = WebDriverWait(driver, timeout)
-        elem = wait.until(text_appeared_in_element(locator))
-        return elem.text
+
+        return wait.until(translation_is_finished)
 
 
 # helper features
-class text_appeared_in_element:
-    """An expectation for checking that an element has an empty text."""
+def translation_is_finished(driver) -> Union[bool, str]:
+    """Return translated text when it appears in HTML."""
+    elem = driver.find_element(By.CLASS_NAME, TRANSLATION_CLASS)
+    text = elem.get_attribute(TRANSLATION_ATTR)
 
-    EMPTY: Final[str] = ""
-
-    def __init__(self, locator: Tuple[str, str]) -> None:
-        self.locator = locator
-
-    def __call__(self, driver: WebDriver) -> Union[WebElement, bool]:
-        elem = driver.find_element(*self.locator)
-
-        if elem.text == self.EMPTY:
-            return False
-        else:
-            return elem
+    return False if text == "" else text
 
 
 def get_driver(driver: Driver = Driver.CHROME, **kwargs) -> WebDriver:
