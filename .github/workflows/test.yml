@@ -12,6 +12,13 @@ jobs:
   job:
     name: Test
     runs-on: ubuntu-latest
+    services:
+      chrome:
+        image: selenium/standalone-chrome:3.141.59-20210105
+        ports:
+          - 4444:4444
+        volumes:
+          - /dev/shm:/dev/shm
     strategy:
       matrix:
         python-version: [3.6, 3.7, 3.8]
@@ -23,7 +30,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
       - name: Install dependencies
         run: |
-          pip install chromedriver-binary-auto poetry
+          pip install poetry
           poetry install
       - name: Lint by Flake8
         run: poetry run flake8 tests astro_ph
