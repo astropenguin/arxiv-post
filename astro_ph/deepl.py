@@ -59,6 +59,7 @@ def translate(
     from_: Language = Language.AUTO,
     driver: Driver = Driver.CHROME,
     timeout: int = TIMEOUT,
+    **kwargs,
 ) -> str:
     """Translate a text written in a certain language to another.
 
@@ -68,6 +69,7 @@ def translate(
         from_: Language of the original text.
         driver: Webdriver for interacting with DeepL.
         timeout: Timeout for translation by DeepL.
+        kwargs: Keyword arguments for the webdriver.
 
     Returns:
         Translated text.
@@ -76,7 +78,7 @@ def translate(
     locator = By.CLASS_NAME, TRANSLATION_CLASS
     url = f"{TRANSLATOR_URL}#{from_.name}/{to.name}/{quote(text)}"
 
-    with get_driver(driver) as driver:
+    with get_driver(driver, **kwargs) as driver:
         driver.get(url)
         wait = WebDriverWait(driver, timeout)
         elem = wait.until(text_appeared_in_element(locator))
@@ -101,35 +103,35 @@ class text_appeared_in_element:
             return elem
 
 
-def get_driver(driver: Driver = Driver.CHROME) -> WebDriver:
+def get_driver(driver: Driver = Driver.CHROME, **kwargs) -> WebDriver:
     """Return a webdriver for interacting with DeepL."""
     if driver == Driver.CHROME:
         options = ChromeOptions()
         options.headless = True
-        return Chrome(options=options)
+        return Chrome(options=options, **kwargs)
 
     if driver == Driver.CHROME_REMOTE:
         options = ChromeOptions()
         options.headless = True
-        return Remote(options=options)
+        return Remote(options=options, **kwargs)
 
     if driver == Driver.FIREFOX:
         options = FirefoxOptions()
         options.headless = True
-        return Firefox(options=options)
+        return Firefox(options=options, **kwargs)
 
     if driver == Driver.FIREFOX_REMOTE:
         options = FirefoxOptions()
         options.headless = True
-        return Remote(options=options)
+        return Remote(options=options, **kwargs)
 
     if driver == Driver.OPERA:
-        return Opera()
+        return Opera(**kwargs)
 
     if driver == Driver.EDGE:
-        return Edge()
+        return Edge(**kwargs)
 
     if driver == Driver.SAFARI:
-        return Safari()
+        return Safari(**kwargs)
 
     raise ValueError(driver)
