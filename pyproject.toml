@@ -15,6 +15,7 @@ typing-extensions = "^3.7"
 
 [tool.poetry.dev-dependencies]
 black = "^20.8b"
+chromedriver-binary-auto = "^0.1"
 flake8 = "^3.8"
 ipython = "^7.16"
 jedi = "^0.17"
