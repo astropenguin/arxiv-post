@@ -113,7 +113,7 @@ def get_driver(driver: Driver = Driver.CHROME, **kwargs) -> WebDriver:
     if driver == Driver.CHROME_REMOTE:
         options = ChromeOptions()
         options.headless = True
-        return Remote(options=options, **kwargs)
+        return Remote(desired_capabilities=options.to_capabilities(), **kwargs)
 
     if driver == Driver.FIREFOX:
         options = FirefoxOptions()
@@ -123,7 +123,7 @@ def get_driver(driver: Driver = Driver.CHROME, **kwargs) -> WebDriver:
     if driver == Driver.FIREFOX_REMOTE:
         options = FirefoxOptions()
         options.headless = True
-        return Remote(options=options, **kwargs)
+        return Remote(desired_capabilities=options.to_capabilities(), **kwargs)
 
     if driver == Driver.OPERA:
         return Opera(**kwargs)
