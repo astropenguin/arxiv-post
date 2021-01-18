@@ -1,9 +1,9 @@
-import demonstration as demo
+import astro_ph
 
 
 def test_author():
-    assert demo.__author__ == "Akio Taniguchi"
+    assert astro_ph.__author__ == "Akio Taniguchi"
 
 
 def test_version():
-    assert demo.__version__ == "0.2.0"
+    assert astro_ph.__version__ == "0.1.0"

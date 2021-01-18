@@ -1,8 +1,8 @@
-# python-package-template
+# astro-ph
 
-[![PyPI](https://img.shields.io/pypi/v/demonstration.svg?label=PyPI&style=flat-square)](https://pypi.org/project/demonstration/)
-[![Python](https://img.shields.io/pypi/pyversions/demonstration.svg?label=Python&color=yellow&style=flat-square)](https://pypi.org/project/demonstration/)
-[![Test](https://img.shields.io/github/workflow/status/astropenguin/python-package-template/Test?logo=github&label=Test&style=flat-square)](https://github.com/astropenguin/python-package-template/actions)
+[![PyPI](https://img.shields.io/pypi/v/astro-ph.svg?label=PyPI&style=flat-square)](https://pypi.org/project/astro-ph/)
+[![Python](https://img.shields.io/pypi/pyversions/astro-ph.svg?label=Python&color=yellow&style=flat-square)](https://pypi.org/project/astro-ph/)
+[![Test](https://img.shields.io/github/workflow/status/astropenguin/astro-ph/Test?logo=github&label=Test&style=flat-square)](https://github.com/astropenguin/astro-ph/actions)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg?label=License&style=flat-square)](LICENSE)
 
-Template repository for creating Python packages with GitHub
+Post astro-ph articles translated by DeepL to Slack
