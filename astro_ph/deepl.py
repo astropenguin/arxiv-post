@@ -27,11 +27,10 @@ class Driver(Enum):
     """Available webdrivers for translation."""
 
     CHROME = auto()
-    CHROME_REMOTE = auto()
-    FIREFOX = auto()
-    FIREFOX_REMOTE = auto()
-    OPERA = auto()
     EDGE = auto()
+    FIREFOX = auto()
+    OPERA = auto()
+    REMOTE = auto()
     SAFARI = auto()
 
 
@@ -110,26 +109,19 @@ def get_driver(driver: Driver = Driver.CHROME, **kwargs) -> WebDriver:
         options.headless = True
         return Chrome(options=options, **kwargs)
 
-    if driver == Driver.CHROME_REMOTE:
-        options = ChromeOptions()
-        options.headless = True
-        return Remote(desired_capabilities=options.to_capabilities(), **kwargs)
-
     if driver == Driver.FIREFOX:
         options = FirefoxOptions()
         options.headless = True
         return Firefox(options=options, **kwargs)
 
-    if driver == Driver.FIREFOX_REMOTE:
-        options = FirefoxOptions()
-        options.headless = True
-        return Remote(desired_capabilities=options.to_capabilities(), **kwargs)
+    if driver == Driver.EDGE:
+        return Edge(**kwargs)
 
     if driver == Driver.OPERA:
         return Opera(**kwargs)
 
-    if driver == Driver.EDGE:
-        return Edge(**kwargs)
+    if driver == Driver.REMOTE:
+        return Remote(**kwargs)
 
     if driver == Driver.SAFARI:
         return Safari(**kwargs)
