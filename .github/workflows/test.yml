@@ -23,14 +23,11 @@ jobs:
           python-version: ${{ matrix.python-version }}
       - name: Install dependencies
         run: |
-          sudo apt install pandoc
           pip install poetry
           poetry install
       - name: Lint by Flake8
-        run: poetry run flake8 docs tests astro_ph
+        run: poetry run flake8 tests astro_ph
       - name: Format by Black
-        run: poetry run black --check docs tests astro_ph
+        run: poetry run black --check tests astro_ph
       - name: Test by pytest
         run : poetry run pytest -v tests
-      - name: Build docs
-        run: poetry run scripts/docs

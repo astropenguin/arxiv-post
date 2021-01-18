@@ -11,19 +11,14 @@ fi
 poetry install
 
 
-# Install IPython kernel to Jupyter
-poetry run python -m ipykernel install \
-    --user \
-    --name "python-$(basename $PWD)" \
-    --display-name "Python ($(basename $PWD))"
-
-
-# Setup VS Code's workspace settings
+# Install VS Code's Python extension
 if type code >/dev/null 2>&1
 then
     code --install-extension ms-python.python
 fi
 
+
+# Setup VS Code's workspace settings
 mkdir -p .vscode
 cat << EOS > .vscode/settings.json
 {
