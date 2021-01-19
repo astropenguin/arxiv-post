@@ -41,20 +41,22 @@ class Query:
         if self.categories is None:
             self.categories = list()
 
-    @classmethod
-    def n_days_ago(
-        cls,
-        n: int,
-        keywords: Optional[Sequence[str]] = None,
-        categories: Optional[Sequence[str]] = None,
-    ) -> "Query":
-        """Return a query to search for articles published n days ago."""
-        return cls(
-            start=get_today() - timedelta(days=n),
-            end=get_today() - timedelta(days=n - 1),
-            keywords=keywords,
-            categories=categories,
-        )
+    def to_arxiv_query(self) -> str:
+        """Convert an instance to a query for the arXiv API."""
+        start = self.start.strftime(DATE_FORMAT)
+        end = (self.end - timedelta(seconds=1)).strftime(DATE_FORMAT)
+
+        query = f"{DATE}:[{start} {TO} {end}]"
+
+        if self.categories:
+            subquery = f" {OR} ".join(f"{CAT}:{cat}" for cat in self.categories)
+            query += f" {AND} ({subquery})"
+
+        if self.keywords:
+            subquery = f" {OR} ".join(f"{ABS}:{kwd}" for kwd in self.keywords)
+            query += f" {AND} ({subquery})"
+
+        return query
 
     @classmethod
     def today(
@@ -74,10 +76,20 @@ class Query:
         """Return a query to search for articles published yesterday."""
         return cls.n_days_ago(1, keywords, categories)
 
-    def to_arxiv_query(self) -> str:
-        """Convert an instance to a query for the arXiv API."""
-        start = self.start.strftime(DATE_FORMAT)
-        end = (self.end - timedelta(seconds=1)).strftime(DATE_FORMAT)
+    @classmethod
+    def n_days_ago(
+        cls,
+        n: int,
+        keywords: Optional[Sequence[str]] = None,
+        categories: Optional[Sequence[str]] = None,
+    ) -> "Query":
+        """Return a query to search for articles published n days ago."""
+        return cls(
+            start=get_today() - timedelta(days=n),
+            end=get_today() - timedelta(days=n - 1),
+            keywords=keywords,
+            categories=categories,
+        )
 
         query = f"{DATE}:[{start} {TO} {end}]"
 
