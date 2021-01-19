@@ -85,15 +85,15 @@ def translate(
 
 
 # helper features
-def translation_is_finished(driver) -> Union[bool, str]:
-    """Return translated text when it appears in HTML."""
+def translation_is_finished(driver: Driver) -> Union[bool, str]:
+    """Return the translated text when it appears in HTML."""
     elem = driver.find_element(By.CLASS_NAME, TRANSLATION_CLASS)
     text = elem.get_attribute(TRANSLATION_ATTR)
 
     return False if text == "" else text
 
 
-def get_driver(driver: Driver = Driver.CHROME, **kwargs) -> WebDriver:
+def get_driver(driver: Driver, **kwargs) -> WebDriver:
     """Return a webdriver for interacting with DeepL."""
     if driver == Driver.CHROME:
         options = ChromeOptions()
