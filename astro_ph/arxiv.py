@@ -1,4 +1,4 @@
-__all__ = ["Query"]
+__all__ = ["Article", "Query", "search"]
 
 
 # standard library
@@ -8,6 +8,7 @@ from typing import Optional, Sequence, Union
 
 
 # third-party packages
+import arxiv
 from typing_extensions import Final
 from .deepl import Driver, Language, translate
 
@@ -120,17 +121,27 @@ class Query:
             categories=categories,
         )
 
-        query = f"{DATE}:[{start} {TO} {end}]"
 
-        if self.categories:
-            subquery = f" {OR} ".join(f"{CAT}:{cat}" for cat in self.categories)
-            query += f" {AND} ({subquery})"
+def search(
+    n_days_ago: int,
+    keywords: Optional[Sequence[str]] = None,
+    categories: Optional[Sequence[str]] = None,
+) -> Sequence[Article]:
+    """Search for articles with given keywords and categories in arXiv.
 
-        if self.keywords:
-            subquery = f" {OR} ".join(f"{ABS}:{kwd}" for kwd in self.keywords)
-            query += f" {AND} ({subquery})"
+    Args:
+        n_days_ago: Integer to indicate a search range of past.
+        keywords: Keywords used for search (e.g., 'galaxy').
+        categories: arXiv categories (e.g., 'astro-ph.GA').
 
-        return query
+    Returns:
+        Sequence of articles found in arXiv.
+
+    """
+    query = Query.n_days_ago(n_days_ago, keywords, categories)
+    results = arxiv.query(query.to_arxiv_query())
+
+    return [Article.from_arxiv_result(result) for result in results]
 
 
 # helper features
