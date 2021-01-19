@@ -24,6 +24,7 @@ TRANSLATION_TIMEOUT: Final[int] = 30
 TRANSLATION_URL: Final[str] = "https://www.deepl.com/translator"
 
 
+# main features
 class Driver(Enum):
     """Available webdrivers for translation."""
 
@@ -52,11 +53,10 @@ class Language(Enum):
     ZH = auto()
 
 
-# main features
 def translate(
     text: str,
-    to: Language = Language.AUTO,
-    from_: Language = Language.AUTO,
+    lang_to: Language = Language.AUTO,
+    lang_from: Language = Language.AUTO,
     driver: Driver = Driver.CHROME,
     timeout: int = TRANSLATION_TIMEOUT,
     **kwargs,
@@ -65,8 +65,8 @@ def translate(
 
     Args:
         text: Text to be translated.
-        to: Language to which the text is translated.
-        from_: Language of the original text.
+        lang_to: Language to which the text is translated.
+        lang_from: Language of the original text.
         driver: Webdriver for interacting with DeepL.
         timeout: Timeout for translation by DeepL.
         kwargs: Keyword arguments for the webdriver.
@@ -75,7 +75,7 @@ def translate(
         Translated text.
 
     """
-    url = f"{TRANSLATION_URL}#{from_.name}/{to.name}/{quote(text)}"
+    url = f"{TRANSLATION_URL}#{lang_from.name}/{lang_to.name}/{quote(text)}"
 
     with get_driver(driver, **kwargs) as driver:
         driver.get(url)
