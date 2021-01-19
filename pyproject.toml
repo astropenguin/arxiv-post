@@ -11,6 +11,7 @@ documentation = "https://astropenguin.github.io/astro-ph/"
 [tool.poetry.dependencies]
 python = "^3.6"
 arxiv = "^0.5"
+dataclasses = { version = "^0.7", python = "~3.6" }
 selenium = "^3.141"
 typing-extensions = "^3.7"
 
