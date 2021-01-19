@@ -106,24 +106,6 @@ class Query:
         return query
 
     @classmethod
-    def today(
-        cls,
-        keywords: Optional[Sequence[str]] = None,
-        categories: Optional[Sequence[str]] = None,
-    ) -> "Query":
-        """Return a query to search for articles published today."""
-        return cls.n_days_ago(0, keywords, categories)
-
-    @classmethod
-    def yesterday(
-        cls,
-        keywords: Optional[Sequence[str]] = None,
-        categories: Optional[Sequence[str]] = None,
-    ) -> "Query":
-        """Return a query to search for articles published yesterday."""
-        return cls.n_days_ago(1, keywords, categories)
-
-    @classmethod
     def n_days_ago(
         cls,
         n: int,
