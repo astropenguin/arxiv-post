@@ -28,29 +28,29 @@ TRANSLATION_URL: Final[str] = "https://www.deepl.com/translator"
 class Driver(Enum):
     """Available webdrivers for translation."""
 
-    CHROME = auto()
-    EDGE = auto()
-    FIREFOX = auto()
-    OPERA = auto()
-    REMOTE = auto()
-    SAFARI = auto()
+    CHROME = auto()  #: Google Chrome
+    EDGE = auto()  #: Microsoft Edge
+    FIREFOX = auto()  #: Mozilla Firefox
+    OPERA = auto()  #: Opera Opera
+    REMOTE = auto()  #: Remote webdriver
+    SAFARI = auto()  #: Apple Safari
 
 
 class Language(Enum):
     """Available languages for translation."""
 
-    AUTO = auto()
-    DE = auto()
-    EN = auto()
-    FR = auto()
-    IT = auto()
-    JA = auto()
-    ES = auto()
-    NL = auto()
-    PL = auto()
-    PT = auto()
-    RU = auto()
-    ZH = auto()
+    AUTO = auto()  #: Auto language detection
+    DE = auto()  #: German
+    EN = auto()  #: English
+    FR = auto()  #: French
+    IT = auto()  #: Italian
+    JA = auto()  #: Japanese
+    ES = auto()  #: Spanish
+    NL = auto()  #: Dutch
+    PL = auto()  #: Polish
+    PT = auto()  #: Portuguese
+    RU = auto()  #: Russian
+    ZH = auto()  #: Chinese
 
 
 def translate(
