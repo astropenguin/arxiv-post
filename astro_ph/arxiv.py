@@ -1,9 +1,9 @@
-__all__ = ["Article", "Query", "search"]
+__all__ = ["Article", "Search", "search"]
 
 
 # standard library
 from datetime import date, datetime, time, timedelta
-from dataclasses import dataclass, replace
+from dataclasses import dataclass, field, replace
 from typing import Optional, Sequence, Union
 
 
@@ -68,8 +68,8 @@ class Article:
 
 
 @dataclass
-class Query:
-    """Query class to search for articles in arXiv."""
+class Search:
+    """Search class to search for articles in arXiv."""
 
     date_start: Union[datetime, str]  #: Start date for a search (inclusive).
     date_end: Union[datetime, str]  #: End date for a search (exclusive).
