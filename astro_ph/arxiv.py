@@ -1,10 +1,10 @@
-__all__ = ["Article", "Search", "search"]
+__all__ = ["Article", "Search"]
 
 
 # standard library
 from datetime import date, datetime, time, timedelta
 from dataclasses import dataclass, field, replace
-from typing import Optional, Sequence, Union
+from typing import Sequence, Union
 
 
 # third-party packages
@@ -103,43 +103,6 @@ class Search:
             query += f" {AND} ({subquery})"
 
         return query
-
-    @classmethod
-    def n_days_ago(
-        cls,
-        n: int,
-        keywords: Optional[Sequence[str]] = None,
-        categories: Optional[Sequence[str]] = None,
-    ) -> "Query":
-        """Return a query to search for articles published n days ago."""
-        return cls(
-            start=get_today() - timedelta(days=n),
-            end=get_today() - timedelta(days=n - 1),
-            keywords=keywords,
-            categories=categories,
-        )
-
-
-def search(
-    n_days_ago: int,
-    keywords: Optional[Sequence[str]] = None,
-    categories: Optional[Sequence[str]] = None,
-) -> Sequence[Article]:
-    """Search for articles with given keywords and categories in arXiv.
-
-    Args:
-        n_days_ago: Integer to indicate a search range of past.
-        keywords: Keywords used for search (e.g., 'galaxy').
-        categories: arXiv categories (e.g., 'astro-ph.GA').
-
-    Returns:
-        Sequence of articles found in arXiv.
-
-    """
-    query = Query.n_days_ago(n_days_ago, keywords, categories)
-    results = arxiv.query(query.to_arxiv_query())
-
-    return [Article.from_arxiv_result(result) for result in results]
 
 
 # helper features
