@@ -1,10 +1,10 @@
-__all__ = ["Article", "Search"]
+__all__ = ["Article", "Search", "search", "search_n_days_ago"]
 
 
 # standard library
 from datetime import date, datetime, time, timedelta
 from dataclasses import dataclass, field, replace
-from typing import Sequence, Union
+from typing import Optional, Sequence, Union
 
 
 # third-party packages
@@ -120,7 +120,66 @@ class Search:
         return query
 
 
-# helper features
-def get_today() -> datetime:
-    """Return a datetime instance to indicate today."""
-    return datetime.combine(date.today(), time())
+def search(
+    date_start: Union[datetime, str],
+    date_end: Union[datetime, str],
+    keywords: Optional[Sequence[str]] = None,
+    categories: Optional[Sequence[str]] = None,
+    max_articles: int = MAX_ARTICLES,
+) -> Sequence[Article]:
+    """Search for articles with given conditions in arXiv.
+
+    Args:
+        date_start: Start date for a search (inclusive).
+        date_end: End date for a search (exclusive).
+        keywords: Keywords for a search (e.g., `['galaxy']`).
+        categories: arXiv categories (e.g., `['astro-ph.GA']`).
+        max_articles: Maximum number of articles to get.
+
+    Returns:
+        Articles found by the conditions.
+
+    """
+    if keywords is None:
+        keywords = []
+
+    if categories is None:
+        categories = []
+
+    return Search(
+        date_start=date_start,
+        date_end=date_end,
+        keywords=keywords,
+        categories=categories,
+        max_articles=max_articles,
+    ).run()
+
+
+def search_n_days_ago(
+    n: int,
+    keywords: Optional[Sequence[str]] = None,
+    categories: Optional[Sequence[str]] = None,
+    max_articles: int = MAX_ARTICLES,
+) -> Sequence[Article]:
+    """Search for articles published n days ago.
+
+    Args:
+        n: Integer to indicate the date to search.
+            For example, `n=1` is for articles yesterday.
+        keywords: Keywords for a search (e.g., `['galaxy']`).
+        categories: arXiv categories (e.g., `['astro-ph.GA']`).
+        max_articles: Maximum number of articles to get.
+
+    Returns:
+        Articles found by the conditions.
+
+    """
+    today = datetime.combine(date.today(), time())
+
+    return search(
+        date_start=today - timedelta(days=n),
+        date_end=today - timedelta(days=n - 1),
+        keywords=keywords,
+        categories=categories,
+        max_articles=max_articles,
+    )
