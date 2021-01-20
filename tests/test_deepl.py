@@ -9,6 +9,6 @@ TEXT_EN: Final[str] = "This is a test script."
 TEXT_JA: Final[str] = "これはテストスクリプトです。"
 
 
-# main features
+# test functions
 def test_translate():
     assert translate(TEXT_EN, Language.JA) == TEXT_JA
