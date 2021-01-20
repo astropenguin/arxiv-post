@@ -88,9 +88,7 @@ def translate(
 def translation_is_finished(driver: Driver) -> Union[bool, str]:
     """Return the translated text when it appears in HTML."""
     elem = driver.find_element(By.CLASS_NAME, TRANSLATION_CLASS)
-    text = elem.get_attribute(TRANSLATION_ATTR)
-
-    return False if text == "" else text
+    return elem.get_attribute(TRANSLATION_ATTR) or False
 
 
 def get_driver(driver: Driver, **kwargs) -> WebDriver:
