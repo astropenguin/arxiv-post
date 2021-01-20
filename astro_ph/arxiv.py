@@ -21,6 +21,7 @@ AUTHORS: Final[str] = "authors"
 CAT: Final[str] = "cat"
 DATE: Final[str] = "submittedDate"
 DATE_FORMAT: Final[str] = "%Y%m%d%H%M%S"
+MAX_ARTICLES: Final[str] = 100
 OR: Final[str] = "OR"
 SEPARATOR: Final[str] = "++++++++++"
 SUMMARY: Final[str] = "summary"
@@ -87,6 +88,7 @@ class Search:
     date_end: Union[datetime, str]  #: End date for a search (exclusive).
     keywords: Sequence[str] = field(default_factory=list)  #: Keywords for a search.
     categories: Sequence[str] = field(default_factory=list)  #: arXiv categories.
+    max_articles: int = MAX_ARTICLES  #: Maximum number of articles to get.
 
     def __post_init__(self) -> None:
         if not isinstance(self.date_start, datetime):
@@ -97,7 +99,7 @@ class Search:
 
     def run(self) -> Sequence[Article]:
         """Run a search and return articles found in arXiv."""
-        results = arxiv.query(self.to_arxiv_query())
+        results = arxiv.query(self.to_arxiv_query(), max_results=self.max_articles)
         return [Article.from_arxiv_result(result) for result in results]
 
     def to_arxiv_query(self) -> str:
