@@ -23,8 +23,6 @@ DATE: Final[str] = "submittedDate"
 DATE_FORMAT: Final[str] = "%Y%m%d%H%M%S"
 OR: Final[str] = "OR"
 SUMMARY: Final[str] = "summary"
-TAGS: Final[str] = "tags"
-TERM: Final[str] = "term"
 TITLE: Final[str] = "title"
 TO: Final[str] = "TO"
 
@@ -34,11 +32,10 @@ TO: Final[str] = "TO"
 class Article:
     """Article class to store an article information."""
 
-    title: str  #: Title of the article.
-    authors: Sequence[str]  #: Author(s) of the article.
-    summary: str  #: Summary of the article.
-    categories: Sequence[str]  #: arXiv categories.
-    arxiv_url: str  #: arXiv URL to the article.
+    title: str  #: Title of an article.
+    authors: Sequence[str]  #: Author(s) of an article.
+    summary: str  #: Summary of an article.
+    arxiv_url: str  #: arXiv URL of an article.
 
     def __post_init__(self) -> None:
         self.title = self.title.replace("\n", " ")
@@ -51,7 +48,6 @@ class Article:
             title=result[TITLE],
             authors=result[AUTHORS],
             summary=result[SUMMARY],
-            categories=[tag[TERM] for tag in result[TAGS]],
             arxiv_url=result[ARXIV_URL],
         )
 
