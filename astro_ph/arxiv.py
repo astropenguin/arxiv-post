@@ -10,7 +10,7 @@ from typing import Sequence, Union
 # third-party packages
 import arxiv
 from typing_extensions import Final
-from .deepl import Driver, Language, translate
+from .deepl import Driver, Language, TIMEOUT, translate
 
 
 # constants
@@ -57,12 +57,25 @@ class Article:
         lang_to: Language = Language.AUTO,
         lang_from: Language = Language.AUTO,
         driver: Driver = Driver.CHROME,
+        timeout: int = TIMEOUT,
+        **kwargs,
     ) -> "Article":
-        """Return an article whose title and summary are translated."""
-        text = f"{self.title}\n{SEPARATOR}\n{self.summary}"
-        text_new = translate(text, lang_to, lang_from, driver)
-        title_new, summary_new = text_new.split(SEPARATOR)
+        """Return an article whose title and summary are translated.
 
+        Args:
+            lang_to: Language to which the text is translated.
+            lang_from: Language of the original text.
+            driver: Webdriver for interacting with DeepL.
+            timeout: Timeout for translation by DeepL.
+            kwargs: Keyword arguments for the webdriver.
+
+        Returns:
+            Translated article.
+
+        """
+        text = f"{self.title}\n{SEPARATOR}\n{self.summary}"
+        text_new = translate(text, lang_to, lang_from, driver, timeout, **kwargs)
+        title_new, summary_new = text_new.split(SEPARATOR)
         return replace(self, title=title_new, summary=summary_new)
 
 
