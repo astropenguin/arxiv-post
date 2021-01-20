@@ -57,8 +57,8 @@ def translate(
     text: str,
     lang_to: Language = Language.AUTO,
     lang_from: Language = Language.AUTO,
-    driver: Driver = Driver.CHROME,
     timeout: int = TIMEOUT,
+    driver: Driver = Driver.CHROME,
     **kwargs,
 ) -> str:
     """Translate a text written in a certain language to another.
@@ -67,8 +67,8 @@ def translate(
         text: Text to be translated.
         lang_to: Language to which the text is translated.
         lang_from: Language of the original text.
-        driver: Webdriver for interacting with DeepL.
         timeout: Timeout for translation by DeepL.
+        driver: Webdriver for interacting with DeepL.
         kwargs: Keyword arguments for the webdriver.
 
     Returns:

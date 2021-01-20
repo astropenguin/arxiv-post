@@ -56,8 +56,8 @@ class Article:
         self,
         lang_to: Language = Language.AUTO,
         lang_from: Language = Language.AUTO,
-        driver: Driver = Driver.CHROME,
         timeout: int = TIMEOUT,
+        driver: Driver = Driver.CHROME,
         **kwargs,
     ) -> "Article":
         """Return an article whose title and summary are translated.
@@ -65,8 +65,8 @@ class Article:
         Args:
             lang_to: Language to which the text is translated.
             lang_from: Language of the original text.
-            driver: Webdriver for interacting with DeepL.
             timeout: Timeout for translation by DeepL.
+            driver: Webdriver for interacting with DeepL.
             kwargs: Keyword arguments for the webdriver.
 
         Returns:
@@ -74,7 +74,7 @@ class Article:
 
         """
         text = f"{self.title}\n{SEPARATOR}\n{self.summary}"
-        text_new = translate(text, lang_to, lang_from, driver, timeout, **kwargs)
+        text_new = translate(text, lang_to, lang_from, timeout, driver, **kwargs)
         title_new, summary_new = text_new.split(SEPARATOR)
         return replace(self, title=title_new, summary=summary_new)
 
