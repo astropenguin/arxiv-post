@@ -6,8 +6,8 @@ from typing_extensions import Final
 # constants
 DATE_START: Final[str] = "2021-01-01"
 DATE_END: Final[str] = "2021-01-02"
-KEYWORDS: Final[tuple] = "galaxy",
-CATEGORIES: Final[tuple] = "astro-ph.GA",
+KEYWORDS: Final[tuple] = ("galaxy",)
+CATEGORIES: Final[tuple] = ("astro-ph.GA",)
 N_ARTICLES: Final[int] = 4
 
 
