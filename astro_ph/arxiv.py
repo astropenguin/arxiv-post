@@ -71,30 +71,29 @@ class Article:
 class Query:
     """Query class to search for articles in arXiv."""
 
-    start: Union[datetime, str]  #: Start time for search (inclusive).
-    end: Union[datetime, str]  #: End time for search (exclusive).
-    keywords: Optional[Sequence[str]] = None  #: Keywords for search.
-    categories: Optional[Sequence[str]] = None  #: arXiv categories.
+    date_start: Union[datetime, str]  #: Start date for a search (inclusive).
+    date_end: Union[datetime, str]  #: End date for a search (exclusive).
+    keywords: Sequence[str] = field(default_factory=list)  #: Keywords for a search.
+    categories: Sequence[str] = field(default_factory=list)  #: arXiv categories.
 
     def __post_init__(self) -> None:
-        if not isinstance(self.start, datetime):
-            self.start = datetime.fromisoformat(self.start)
+        if not isinstance(self.date_start, datetime):
+            self.date_start = datetime.fromisoformat(self.date_start)
 
-        if not isinstance(self.end, datetime):
-            self.end = datetime.fromisoformat(self.end)
+        if not isinstance(self.date_end, datetime):
+            self.date_end = datetime.fromisoformat(self.date_end)
 
-        if self.keywords is None:
-            self.keywords = list()
-
-        if self.categories is None:
-            self.categories = list()
+    def run(self) -> Sequence[Article]:
+        """Run a search and return articles found in arXiv."""
+        results = arxiv.query(self.to_arxiv_query())
+        return [Article.from_arxiv_result(result) for result in results]
 
     def to_arxiv_query(self) -> str:
         """Convert an instance to a query for the arXiv API."""
-        start = self.start.strftime(DATE_FORMAT)
-        end = (self.end - timedelta(seconds=1)).strftime(DATE_FORMAT)
+        date_start = self.date_start.strftime(DATE_FORMAT)
+        date_end = (self.date_end - timedelta(seconds=1)).strftime(DATE_FORMAT)
 
-        query = f"{DATE}:[{start} {TO} {end}]"
+        query = f"{DATE}:[{date_start} {TO} {date_end}]"
 
         if self.categories:
             subquery = f" {OR} ".join(f"{CAT}:{cat}" for cat in self.categories)
