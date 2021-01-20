@@ -18,82 +18,79 @@ from typing_extensions import Final
 
 
 # constants
+TIMEOUT: Final[int] = 30
 TRANSLATION_ATTR: Final[str] = "textContent"
 TRANSLATION_CLASS: Final[str] = "lmt__translations_as_text__text_btn"
-TRANSLATION_TIMEOUT: Final[int] = 30
-TRANSLATION_URL: Final[str] = "https://www.deepl.com/translator"
+TRANSLATOR_URL: Final[str] = "https://www.deepl.com/translator"
 
 
+# main features
 class Driver(Enum):
     """Available webdrivers for translation."""
 
-    CHROME = auto()
-    EDGE = auto()
-    FIREFOX = auto()
-    OPERA = auto()
-    REMOTE = auto()
-    SAFARI = auto()
+    CHROME = auto()  #: Google Chrome
+    EDGE = auto()  #: Microsoft Edge
+    FIREFOX = auto()  #: Mozilla Firefox
+    OPERA = auto()  #: Opera Opera
+    REMOTE = auto()  #: Remote webdriver
+    SAFARI = auto()  #: Apple Safari
 
 
 class Language(Enum):
     """Available languages for translation."""
 
-    AUTO = auto()
-    DE = auto()
-    EN = auto()
-    FR = auto()
-    IT = auto()
-    JA = auto()
-    ES = auto()
-    NL = auto()
-    PL = auto()
-    PT = auto()
-    RU = auto()
-    ZH = auto()
+    AUTO = auto()  #: Auto language detection
+    DE = auto()  #: German
+    EN = auto()  #: English
+    FR = auto()  #: French
+    IT = auto()  #: Italian
+    JA = auto()  #: Japanese
+    ES = auto()  #: Spanish
+    NL = auto()  #: Dutch
+    PL = auto()  #: Polish
+    PT = auto()  #: Portuguese
+    RU = auto()  #: Russian
+    ZH = auto()  #: Chinese
 
 
-# main features
 def translate(
     text: str,
-    to: Language = Language.AUTO,
-    from_: Language = Language.AUTO,
+    lang_to: Language = Language.AUTO,
+    lang_from: Language = Language.AUTO,
+    timeout: int = TIMEOUT,
     driver: Driver = Driver.CHROME,
-    timeout: int = TRANSLATION_TIMEOUT,
     **kwargs,
 ) -> str:
     """Translate a text written in a certain language to another.
 
     Args:
         text: Text to be translated.
-        to: Language to which the text is translated.
-        from_: Language of the original text.
-        driver: Webdriver for interacting with DeepL.
+        lang_to: Language to which the text is translated.
+        lang_from: Language of the original text.
         timeout: Timeout for translation by DeepL.
+        driver: Webdriver for interacting with DeepL.
         kwargs: Keyword arguments for the webdriver.
 
     Returns:
         Translated text.
 
     """
-    url = f"{TRANSLATION_URL}#{from_.name}/{to.name}/{quote(text)}"
+    url = f"{TRANSLATOR_URL}#{lang_from.name}/{lang_to.name}/{quote(text)}"
 
     with get_driver(driver, **kwargs) as driver:
         driver.get(url)
         wait = WebDriverWait(driver, timeout)
-
         return wait.until(translation_is_finished)
 
 
 # helper features
-def translation_is_finished(driver) -> Union[bool, str]:
-    """Return translated text when it appears in HTML."""
+def translation_is_finished(driver: Driver) -> Union[bool, str]:
+    """Return the translated text when it appears in HTML."""
     elem = driver.find_element(By.CLASS_NAME, TRANSLATION_CLASS)
-    text = elem.get_attribute(TRANSLATION_ATTR)
-
-    return False if text == "" else text
+    return elem.get_attribute(TRANSLATION_ATTR) or False
 
 
-def get_driver(driver: Driver = Driver.CHROME, **kwargs) -> WebDriver:
+def get_driver(driver: Driver, **kwargs) -> WebDriver:
     """Return a webdriver for interacting with DeepL."""
     if driver == Driver.CHROME:
         options = ChromeOptions()
