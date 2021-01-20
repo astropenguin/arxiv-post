@@ -22,6 +22,7 @@ CAT: Final[str] = "cat"
 DATE: Final[str] = "submittedDate"
 DATE_FORMAT: Final[str] = "%Y%m%d%H%M%S"
 OR: Final[str] = "OR"
+SEPARATOR: Final[str] = "++++++++++"
 SUMMARY: Final[str] = "summary"
 TITLE: Final[str] = "title"
 TO: Final[str] = "TO"
@@ -58,9 +59,11 @@ class Article:
         driver: Driver = Driver.CHROME,
     ) -> "Article":
         """Return an article whose title and summary are translated."""
-        title = translate(self.title, lang_to, lang_from, driver)
-        summary = translate(self.summary, lang_to, lang_from, driver)
-        return replace(self, title=title, summary=summary)
+        text = f"{self.title}\n{SEPARATOR}\n{self.summary}"
+        text_new = translate(text, lang_to, lang_from, driver)
+        title_new, summary_new = text_new.split(SEPARATOR)
+
+        return replace(self, title=title_new, summary=summary_new)
 
 
 @dataclass
