@@ -18,10 +18,10 @@ from typing_extensions import Final
 
 
 # constants
+TIMEOUT: Final[int] = 30
 TRANSLATION_ATTR: Final[str] = "textContent"
 TRANSLATION_CLASS: Final[str] = "lmt__translations_as_text__text_btn"
-TRANSLATION_TIMEOUT: Final[int] = 30
-TRANSLATION_URL: Final[str] = "https://www.deepl.com/translator"
+TRANSLATOR_URL: Final[str] = "https://www.deepl.com/translator"
 
 
 # main features
@@ -58,7 +58,7 @@ def translate(
     lang_to: Language = Language.AUTO,
     lang_from: Language = Language.AUTO,
     driver: Driver = Driver.CHROME,
-    timeout: int = TRANSLATION_TIMEOUT,
+    timeout: int = TIMEOUT,
     **kwargs,
 ) -> str:
     """Translate a text written in a certain language to another.
@@ -75,12 +75,11 @@ def translate(
         Translated text.
 
     """
-    url = f"{TRANSLATION_URL}#{lang_from.name}/{lang_to.name}/{quote(text)}"
+    url = f"{TRANSLATOR_URL}#{lang_from.name}/{lang_to.name}/{quote(text)}"
 
     with get_driver(driver, **kwargs) as driver:
         driver.get(url)
         wait = WebDriverWait(driver, timeout)
-
         return wait.until(translation_is_finished)
 
 
