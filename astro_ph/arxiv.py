@@ -11,6 +11,7 @@ from typing import Awaitable, Iterator, Optional, Sequence, Union
 import arxiv
 from typing_extensions import Final
 from .deepl import DeepL, Language, TIMEOUT
+from .detex import detex
 
 
 # constants
@@ -41,8 +42,8 @@ class Article:
     arxiv_url: str  #: arXiv URL of an article.
 
     def __post_init__(self) -> None:
-        self.title = self.title.replace("\n", " ")
-        self.summary = self.summary.replace("\n", " ")
+        self.title = detex(self.title)
+        self.summary = detex(self.summary)
 
     @classmethod
     def from_arxiv_result(cls, result: dict) -> "Article":
