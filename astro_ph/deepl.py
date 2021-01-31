@@ -41,8 +41,10 @@ class Language(Enum):
 
 @dataclass
 class DeepL:
+    """DeepL class for translating text."""
+
     lang_from: Union[Language, str] = Language.AUTO  #: Language of original text.
-    lang_to: Union[Language, str] = Language.AUTO  #: Language of translated text.
+    lang_to: Union[Language, str] = Language.AUTO  #: Language for translated text.
     timeout: int = TIMEOUT  #: Timeout for translation (in seconds).
 
     def __post_init__(self) -> None:
@@ -94,8 +96,8 @@ def translate(
 
     Args:
         text: Text to be translated.
-        lang_to: Language to which the text is translated.
-        lang_from: Language of the original text.
+        lang_to: Language for translated text.
+        lang_from: Language of original text.
         timeout: Timeout for translation (in seconds).
 
     Returns:
