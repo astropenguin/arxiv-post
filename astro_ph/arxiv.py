@@ -22,6 +22,7 @@ CAT: Final[str] = "cat"
 DATE: Final[str] = "submittedDate"
 DATE_FORMAT: Final[str] = "%Y%m%d%H%M%S"
 MAX_ARTICLES: Final[str] = 100
+ONE_SECOND = timedelta(seconds=1)
 OR: Final[str] = "OR"
 SEPARATOR: Final[str] = "++++++++++"
 SUMMARY: Final[str] = "summary"
@@ -141,17 +142,17 @@ class Search:
     def arxiv_query(self) -> str:
         """Query string for the arXiv API."""
         date_start = self.date_start.strftime(DATE_FORMAT)
-        date_end = (self.date_end - timedelta(seconds=1)).strftime(DATE_FORMAT)
+        date_end = (self.date_end - ONE_SECOND).strftime(DATE_FORMAT)
 
         query = f"{DATE}:[{date_start} {TO} {date_end}]"
 
         if self.categories:
-            subquery = f" {OR} ".join(f"{CAT}:{cat}" for cat in self.categories)
-            query += f" {AND} ({subquery})"
+            sub = f" {OR} ".join(f"{CAT}:{cat}" for cat in self.categories)
+            query += f" {AND} ({sub})"
 
         if self.keywords:
-            subquery = f" {OR} ".join(f"{ABS}:{kwd}" for kwd in self.keywords)
-            query += f" {AND} ({subquery})"
+            sub = f" {OR} ".join(f"{ABS}:{kwd}" for kwd in self.keywords)
+            query += f" {AND} ({sub})"
 
         return query
 
