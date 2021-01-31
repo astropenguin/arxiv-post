@@ -52,7 +52,10 @@ class DeepL:
         if isinstance(self.lang_to, str):
             self.lang_to = Language[self.lang_to.upper()]
 
-        self.url = f"{URL}#/{self.lang_from.name}/{self.lang_to.name}"
+    @property
+    def url(self) -> str:
+        """Base URL of translation."""
+        return f"{URL}#/{self.lang_from.name}/{self.lang_to.name}"
 
     async def translate(self, text: str) -> Awaitable[str]:
         """Translate text written in one language to another."""
