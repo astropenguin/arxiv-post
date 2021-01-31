@@ -9,5 +9,5 @@ TEXT_JA: Final[str] = "これはテストスクリプトです。"
 
 
 # test functions
-def test_translate():
+def test_translate() -> None:
     assert translate(TEXT_EN, Language.JA) == TEXT_JA

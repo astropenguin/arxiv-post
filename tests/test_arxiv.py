@@ -12,6 +12,6 @@ N_ARTICLES: Final[int] = 4
 
 
 # test functions
-def test_search():
+def test_search() -> None:
     articles = search(DATE_START, DATE_END, KEYWORDS, CATEGORIES)
     assert len(articles) == N_ARTICLES

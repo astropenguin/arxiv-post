@@ -1,10 +1,11 @@
 # third-party packages
 from astro_ph.detex import detex
 from pytest import mark
+from typing_extensions import Final
 
 
 # constants
-testdata = (
+testdata: Final[tuple] = (
     ("This is \\textbf{a bold text}.", "This is a bold text."),
     ("This is {\\textbf a bold text}.", "This is a bold text."),
     ("This is \\emph{emphasized}.", "This is emphasized."),
