@@ -3,14 +3,14 @@ __all__ = ["Article", "Search", "search", "search_n_days_ago"]
 
 # standard library
 from datetime import date, datetime, time, timedelta
-from dataclasses import dataclass, field, replace
-from typing import Optional, Sequence, Union
+from dataclasses import dataclass, replace
+from typing import Awaitable, Iterator, Optional, Sequence, Union
 
 
 # third-party packages
 import arxiv
 from typing_extensions import Final
-from .deepl import Driver, Language, TIMEOUT, translate
+from .deepl import DeepL, Language, TIMEOUT
 
 
 # constants
@@ -32,7 +32,7 @@ TO: Final[str] = "TO"
 # main features
 @dataclass
 class Article:
-    """Article class to store an article information."""
+    """Article class for storing article information."""
 
     title: str  #: Title of an article.
     authors: Sequence[str]  #: Author(s) of an article.
@@ -53,41 +53,39 @@ class Article:
             arxiv_url=result[ARXIV_URL],
         )
 
-    def translate(
+    async def translate(
         self,
-        lang_to: Language = Language.AUTO,
-        lang_from: Language = Language.AUTO,
+        lang_to: Union[Language, str] = Language.AUTO,
+        lang_from: Union[Language, str] = Language.AUTO,
         timeout: int = TIMEOUT,
-        driver: Driver = Driver.CHROME,
-        **kwargs,
-    ) -> "Article":
-        """Return an article whose title and summary are translated.
+    ) -> Awaitable["Article"]:
+        """Return an article with translated title and summary.
 
         Args:
-            lang_to: Language to which the text is translated.
-            lang_from: Language of the original text.
-            timeout: Timeout for translation by DeepL.
-            driver: Webdriver for interacting with DeepL.
-            kwargs: Keyword arguments for the webdriver.
+            lang_to: Language for translated text.
+            lang_from: Language of original text.
+            timeout: Timeout for translation (in seconds).
 
         Returns:
             Translated article.
 
         """
+        deepl = DeepL(lang_from, lang_to, timeout)
         text = f"{self.title}\n{SEPARATOR}\n{self.summary}"
-        text_new = translate(text, lang_to, lang_from, timeout, driver, **kwargs)
-        title_new, summary_new = text_new.split(SEPARATOR)
-        return replace(self, title=title_new, summary=summary_new)
+        translated = await deepl.translate(text)
+
+        title, summary = translated.split(SEPARATOR)
+        return replace(self, title=title, summary=summary)
 
 
 @dataclass
 class Search:
-    """Search class to search for articles in arXiv."""
+    """Search class for searching for articles in arXiv."""
 
     date_start: Union[datetime, str]  #: Start date for a search (inclusive).
     date_end: Union[datetime, str]  #: End date for a search (exclusive).
-    keywords: Sequence[str] = field(default_factory=list)  #: Keywords for a search.
-    categories: Sequence[str] = field(default_factory=list)  #: arXiv categories.
+    keywords: Optional[Sequence[str]] = None  #: Keywords for a search.
+    categories: Optional[Sequence[str]] = None  #: arXiv categories.
     max_articles: int = MAX_ARTICLES  #: Maximum number of articles to get.
 
     def __post_init__(self) -> None:
@@ -97,13 +95,51 @@ class Search:
         if not isinstance(self.date_end, datetime):
             self.date_end = datetime.fromisoformat(self.date_end)
 
-    def run(self) -> Sequence[Article]:
-        """Run a search and return articles found in arXiv."""
-        results = arxiv.query(self.to_arxiv_query(), max_results=self.max_articles)
-        return [Article.from_arxiv_result(result) for result in results]
+    @classmethod
+    def n_days_ago(
+        cls,
+        n: int,
+        keywords: Optional[Sequence[str]] = None,
+        categories: Optional[Sequence[str]] = None,
+        max_articles: int = MAX_ARTICLES,
+    ) -> "Search":
+        """Return search instance for articles published n days ago.
 
-    def to_arxiv_query(self) -> str:
-        """Convert an instance to a query for the arXiv API."""
+        Args:
+            n: Integer to indicate the date to search.
+                For example, `n=1` is for articles yesterday.
+            keywords: Keywords for a search (e.g., `['galaxy']`).
+            categories: arXiv categories (e.g., `['astro-ph.GA']`).
+            max_articles: Maximum number of articles to get.
+
+        Returns:
+            Search instance with calculated start and end dates.
+
+        """
+        today = datetime.combine(date.today(), time())
+
+        return cls(
+            date_start=today - timedelta(days=n),
+            date_end=today - timedelta(days=n - 1),
+            keywords=keywords,
+            categories=categories,
+            max_articles=max_articles,
+        )
+
+    def run(self) -> Iterator[Article]:
+        """Run a search and yield articles found in arXiv."""
+        results = arxiv.query(
+            query=self.arxiv_query,
+            max_results=self.max_articles,
+            iterative=True,
+        )
+
+        for result in results():
+            yield Article.from_arxiv_result(result)
+
+    @property
+    def arxiv_query(self) -> str:
+        """Query string for the arXiv API."""
         date_start = self.date_start.strftime(DATE_FORMAT)
         date_end = (self.date_end - timedelta(seconds=1)).strftime(DATE_FORMAT)
 
@@ -140,19 +176,15 @@ def search(
         Articles found by the conditions.
 
     """
-    if keywords is None:
-        keywords = []
-
-    if categories is None:
-        categories = []
-
-    return Search(
+    search = Search(
         date_start=date_start,
         date_end=date_end,
         keywords=keywords,
         categories=categories,
         max_articles=max_articles,
-    ).run()
+    )
+
+    return list(search.run())
 
 
 def search_n_days_ago(
@@ -174,12 +206,11 @@ def search_n_days_ago(
         Articles found by the conditions.
 
     """
-    today = datetime.combine(date.today(), time())
-
-    return search(
-        date_start=today - timedelta(days=n),
-        date_end=today - timedelta(days=n - 1),
+    search = Search.n_days_ago(
+        n=n,
         keywords=keywords,
         categories=categories,
         max_articles=max_articles,
     )
+
+    return list(search.run())
