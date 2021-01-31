@@ -1,5 +1,4 @@
 # third-party packages
-import chromedriver_binary  # noqa
 from astro_ph.deepl import Language, translate
 from typing_extensions import Final
 
