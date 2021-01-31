@@ -1,9 +1,17 @@
+# third-party packages
 import astro_ph
+from typing_extensions import Final
 
 
-def test_author():
-    assert astro_ph.__author__ == "Akio Taniguchi"
+# constants
+AUTHOR: Final[str] = "Akio Taniguchi"
+VERSION: Final[str] = "0.1.0"
 
 
-def test_version():
-    assert astro_ph.__version__ == "0.1.0"
+# test functions
+def test_author() -> None:
+    assert astro_ph.__author__ == AUTHOR
+
+
+def test_version() -> None:
+    assert astro_ph.__version__ == VERSION
