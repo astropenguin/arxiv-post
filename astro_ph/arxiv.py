@@ -54,6 +54,15 @@ class Article:
             arxiv_url=result[ARXIV_URL],
         )
 
+    def replace(self, text: str, translated: str) -> "Article":
+        """Method necessary to become translatable."""
+        title, summary = translated.split(SEPARATOR)
+        return replace(self, title=title, summary=summary)
+
+    def __str__(self) -> str:
+        """Method necessary to become translatable."""
+        return f"{self.title}\n{SEPARATOR}\n{self.summary}"
+
 
 @dataclass
 class Search:
