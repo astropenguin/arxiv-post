@@ -75,12 +75,18 @@ class DeepL:
         """Base URL of translation."""
         return f"{URL}#/{self.lang_from.name}/{self.lang_to.name}"
 
-    async def translate(self, text: str) -> Awaitable[str]:
+    async def translate(self, obj: Translatable) -> Awaitable[Translatable]:
+        """Translate object written in one language to another."""
+        text = str(obj)
+        translated = await self._translate_text(text)
+        return obj.replace(text, translated)
+
+    async def _translate_text(self, text: str) -> Awaitable[str]:
         """Translate text written in one language to another."""
         browser = await launch()
         page = await browser.newPage()
         page.setDefaultNavigationTimeout(self.timeout * 1000)
-        completion = self.translation_completion(page)
+        completion = self._translation_completion(page)
 
         try:
             await page.goto(f"{self.url}/{quote(text)}")
@@ -90,7 +96,7 @@ class DeepL:
         finally:
             await browser.close()
 
-    async def translation_completion(self, page) -> Awaitable[str]:
+    async def _translation_completion(self, page) -> Awaitable[str]:
         """Wait for completion of translation and return result."""
         translated = ""
 
