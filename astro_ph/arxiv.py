@@ -4,13 +4,12 @@ __all__ = ["Article", "Search", "search", "search_n_days_ago"]
 # standard library
 from datetime import date, datetime, time, timedelta
 from dataclasses import dataclass, replace
-from typing import Awaitable, Iterator, Optional, Sequence, Union
+from typing import Iterator, Optional, Sequence, Union
 
 
 # third-party packages
 import arxiv
 from typing_extensions import Final
-from .deepl import DeepL, Language, TIMEOUT
 from .detex import detex
 
 
@@ -54,30 +53,6 @@ class Article:
             summary=result[SUMMARY],
             arxiv_url=result[ARXIV_URL],
         )
-
-    async def translate(
-        self,
-        lang_to: Union[Language, str] = Language.AUTO,
-        lang_from: Union[Language, str] = Language.AUTO,
-        timeout: int = TIMEOUT,
-    ) -> Awaitable["Article"]:
-        """Return an article with translated title and summary.
-
-        Args:
-            lang_to: Language for translated text.
-            lang_from: Language of original text.
-            timeout: Timeout for translation (in seconds).
-
-        Returns:
-            Translated article.
-
-        """
-        deepl = DeepL(lang_from, lang_to, timeout)
-        text = f"{self.title}\n{SEPARATOR}\n{self.summary}"
-        translated = await deepl.translate(text)
-
-        title, summary = translated.split(SEPARATOR)
-        return replace(self, title=title, summary=summary)
 
 
 @dataclass
