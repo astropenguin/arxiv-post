@@ -15,7 +15,7 @@ from typing_extensions import Final, Protocol
 
 
 # constants
-URL: Final[str] = "https://www.deepl.com/translator"
+DEEPL_URL: Final[str] = "https://www.deepl.com/translator"
 JS_FUNC: Final[str] = "element => element.textContent"
 SELECTOR: Final[str] = ".lmt__translations_as_text__text_btn"
 TIMEOUT: Final[int] = 30
@@ -73,7 +73,7 @@ class DeepL:
     @property
     def url(self) -> str:
         """Base URL of translation."""
-        return f"{URL}#/{self.lang_from.name}/{self.lang_to.name}"
+        return f"{DEEPL_URL}#/{self.lang_from.name}/{self.lang_to.name}"
 
     async def translate(self, obj: Translatable) -> Awaitable[Translatable]:
         """Translate object written in one language to another."""
