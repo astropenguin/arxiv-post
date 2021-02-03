@@ -5,13 +5,13 @@ __all__ = ["DeepL", "Language", "translate"]
 import asyncio
 from dataclasses import dataclass
 from enum import auto, Enum
-from typing import Awaitable, Union
+from typing import Awaitable, TypeVar, Union
 from urllib.parse import quote
 
 
 # third-party packages
 from pyppeteer import launch
-from typing_extensions import Final
+from typing_extensions import Final, Protocol
 
 
 # constants
@@ -19,6 +19,22 @@ URL: Final[str] = "https://www.deepl.com/translator"
 JS_FUNC: Final[str] = "element => element.textContent"
 SELECTOR: Final[str] = ".lmt__translations_as_text__text_btn"
 TIMEOUT: Final[int] = 30
+
+
+# type hints
+T = TypeVar("T")
+
+
+class Translatable(Protocol[T]):
+    """Protocol that defines translatable objects."""
+
+    def __str__(self) -> str:
+        """Return text to be translated."""
+        ...
+
+    def replace(text: str, translated: str) -> T:
+        """Replace text with translated one."""
+        ...
 
 
 # main features
