@@ -109,22 +109,22 @@ class DeepL:
 
 
 def translate(
-    text: str,
+    obj: Translatable,
     lang_to: Union[Language, str] = Language.AUTO,
     lang_from: Union[Language, str] = Language.AUTO,
     timeout: int = TIMEOUT,
-) -> str:
-    """Translate text written in one language to another.
+) -> Translatable:
+    """Translate object written in one language to another.
 
     Args:
-        text: Text to be translated.
+        obj: Object whose text is to be translated.
         lang_to: Language for translated text.
         lang_from: Language of original text.
         timeout: Timeout for translation (in seconds).
 
     Returns:
-        Translated text.
+        Translated object.
 
     """
     deepl = DeepL(lang_from, lang_to, timeout)
-    return asyncio.run(deepl.translate(text))
+    return asyncio.run(deepl.translate(obj))
