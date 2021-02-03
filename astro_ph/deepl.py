@@ -5,20 +5,36 @@ __all__ = ["DeepL", "Language", "translate"]
 import asyncio
 from dataclasses import dataclass
 from enum import auto, Enum
-from typing import Awaitable, Union
+from typing import Awaitable, TypeVar, Union
 from urllib.parse import quote
 
 
 # third-party packages
 from pyppeteer import launch
-from typing_extensions import Final
+from typing_extensions import Final, Protocol
 
 
 # constants
-URL: Final[str] = "https://www.deepl.com/translator"
+DEEPL_URL: Final[str] = "https://www.deepl.com/translator"
 JS_FUNC: Final[str] = "element => element.textContent"
 SELECTOR: Final[str] = ".lmt__translations_as_text__text_btn"
 TIMEOUT: Final[int] = 30
+
+
+# type hints
+T = TypeVar("T")
+
+
+class Translatable(Protocol[T]):
+    """Protocol that defines translatable objects."""
+
+    def __str__(self) -> str:
+        """Return text to be translated."""
+        ...
+
+    def replace(text: str, translated: str) -> T:
+        """Replace text with translated one."""
+        ...
 
 
 # main features
@@ -57,14 +73,20 @@ class DeepL:
     @property
     def url(self) -> str:
         """Base URL of translation."""
-        return f"{URL}#/{self.lang_from.name}/{self.lang_to.name}"
+        return f"{DEEPL_URL}#/{self.lang_from.name}/{self.lang_to.name}"
 
-    async def translate(self, text: str) -> Awaitable[str]:
+    async def translate(self, obj: Translatable) -> Awaitable[Translatable]:
+        """Translate object written in one language to another."""
+        text = str(obj)
+        translated = await self._translate_text(text)
+        return obj.replace(text, translated)
+
+    async def _translate_text(self, text: str) -> Awaitable[str]:
         """Translate text written in one language to another."""
         browser = await launch()
         page = await browser.newPage()
         page.setDefaultNavigationTimeout(self.timeout * 1000)
-        completion = self.translation_completion(page)
+        completion = self._translation_completion(page)
 
         try:
             await page.goto(f"{self.url}/{quote(text)}")
@@ -74,7 +96,7 @@ class DeepL:
         finally:
             await browser.close()
 
-    async def translation_completion(self, page) -> Awaitable[str]:
+    async def _translation_completion(self, page) -> Awaitable[str]:
         """Wait for completion of translation and return result."""
         translated = ""
 
@@ -87,22 +109,22 @@ class DeepL:
 
 
 def translate(
-    text: str,
+    obj: Translatable,
     lang_to: Union[Language, str] = Language.AUTO,
     lang_from: Union[Language, str] = Language.AUTO,
     timeout: int = TIMEOUT,
-) -> str:
-    """Translate text written in one language to another.
+) -> Translatable:
+    """Translate object written in one language to another.
 
     Args:
-        text: Text to be translated.
+        obj: Object whose text is to be translated.
         lang_to: Language for translated text.
         lang_from: Language of original text.
         timeout: Timeout for translation (in seconds).
 
     Returns:
-        Translated text.
+        Translated object.
 
     """
     deepl = DeepL(lang_from, lang_to, timeout)
-    return asyncio.run(deepl.translate(text))
+    return asyncio.run(deepl.translate(obj))
