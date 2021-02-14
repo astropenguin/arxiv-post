@@ -120,3 +120,43 @@ class Search:
                 max_results=self.n_per_request,
             )
 
+
+# utility functions
+def search(
+    date_start: Union[datetime, str],
+    date_end: Union[datetime, str],
+    keywords: Optional[Sequence[str]] = None,
+    categories: Optional[Sequence[str]] = None,
+    n_max_articles: int = 1000,
+    n_per_request: int = 100,
+    n_parallel: int = 1,
+) -> Sequence[Article]:
+    """Search for articles in arXiv with given conditions.
+
+    Args:
+        date_start: Start date for a search (inclusive).
+        date_end: End date for a search (exclusive).
+        keywords: Keywords for a search.
+        categories: arXiv categories.
+        n_max_articles: Maximum number of articles to get.
+        n_per_request: Number of articles to get per request.
+        n_parallel: Number of simultaneous requests (do not change).
+
+    Returns:
+        List of articles found in arXiv.
+
+    """
+    search = Search(
+        date_start,
+        date_end,
+        keywords,
+        categories,
+        n_max_articles,
+        n_per_request,
+        n_parallel,
+    )
+
+    async def coro() -> Awaitable:
+        return [article async for article in search]
+
+    return asyncio.run(coro())
