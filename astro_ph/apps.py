@@ -11,7 +11,7 @@ T = TypeVar("T")
 
 # helper functions
 async def amap(
-    afunc: Callable[S, Awaitable[T]],
+    afunc: Callable[[S], Awaitable[T]],
     aiterable: AsyncIterable[S],
     n_concurrent: int = 5,
 ) -> Awaitable[Iterable[T]]:
