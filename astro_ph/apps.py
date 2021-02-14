@@ -30,8 +30,8 @@ async def amap(
     queue_out = asyncio.Queue()
 
     # step 1: create consumer coroutines
-    async def consume():
-        async def _consume():
+    async def consume() -> Awaitable[None]:
+        async def _consume() -> Awaitable[None]:
             while True:
                 arg = await queue_in.get()
                 result = await afunc(arg)
@@ -50,7 +50,7 @@ async def amap(
         consumers.append(consumer)
 
     # step 2: create register coroutine
-    async def register():
+    async def register() -> Awaitable[None]:
         async for arg in aiterable:
             await queue_in.put(arg)
 
