@@ -105,13 +105,14 @@ class DeepL:
             raise type(err)("Translation was timed out.")
         finally:
             await browser.close()
+            await asyncio.sleep(1.0)
 
     async def _translation_completion(self, page) -> Awaitable[str]:
         """Wait for completion of translation and return result."""
         translated = ""
 
         while not translated:
-            await asyncio.sleep(1)
+            await asyncio.sleep(1.0)
             element = await page.querySelector(SELECTOR)
             translated = await page.evaluate(JS_FUNC, element)
 
