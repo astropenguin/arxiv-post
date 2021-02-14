@@ -88,7 +88,12 @@ class Search:
 
         async def search():
             async for entry in self._search():
-                yield entry.title.replace("\n", " ")
+                yield Article(
+                    title=entry.title,
+                    authors=[author.name for author in entry.authors],
+                    summary=entry.summary,
+                    arxiv_url=entry.link,
+                )
 
         return search()
 
