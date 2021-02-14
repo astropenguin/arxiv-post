@@ -56,7 +56,7 @@ class Search:
     categories: Optional[Sequence[str]] = None  #: arXiv categories.
     n_max_articles: int = 1000  #: Maximum number of articles to get.
     n_per_request: int = 100  #: Number of articles to get per request.
-    n_parallel: int = 1  #: Number of simultaneous requests (do not change).
+    n_concurrent: int = 1  #: Number of simultaneous requests (do not change).
 
     def __post_init__(self) -> None:
         if not isinstance(self.date_start, datetime):
@@ -94,7 +94,7 @@ class Search:
 
     async def _search(self) -> AsyncIterable[FeedParserDict]:
         """Search for articles and yield them as Atom entries."""
-        connector = TCPConnector(limit=self.n_parallel)
+        connector = TCPConnector(limit=self.n_concurrent)
 
         async with ClientSession(connector=connector) as client:
             requests = list(self._gen_requests(client))
@@ -129,7 +129,7 @@ def search(
     categories: Optional[Sequence[str]] = None,
     n_max_articles: int = 1000,
     n_per_request: int = 100,
-    n_parallel: int = 1,
+    n_concurrent: int = 1,
 ) -> Sequence[Article]:
     """Search for articles in arXiv with given conditions.
 
@@ -140,7 +140,7 @@ def search(
         categories: arXiv categories.
         n_max_articles: Maximum number of articles to get.
         n_per_request: Number of articles to get per request.
-        n_parallel: Number of simultaneous requests (do not change).
+        n_concurrent: Number of simultaneous requests (do not change).
 
     Returns:
         List of articles found in arXiv.
@@ -153,7 +153,7 @@ def search(
         categories,
         n_max_articles,
         n_per_request,
-        n_parallel,
+        n_concurrent,
     )
 
     async def coro() -> Awaitable:
