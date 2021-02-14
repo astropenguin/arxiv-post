@@ -1,5 +1,5 @@
 # third-party packages
-from astro_ph.arxiv import search
+from astro_ph.search import search
 from typing_extensions import Final
 
 

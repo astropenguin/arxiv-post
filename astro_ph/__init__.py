@@ -3,6 +3,7 @@ __author__ = "Akio Taniguchi"
 __version__ = "0.1.0"
 
 
-# aliases
-from .arxiv import *
-from .deepl import *
+# submodules
+from . import detex
+from . import deepl
+from . import search

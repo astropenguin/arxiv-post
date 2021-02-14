@@ -10,15 +10,15 @@ documentation = "https://astropenguin.github.io/astro-ph/"
 
 [tool.poetry.dependencies]
 python = "^3.7"
-arxiv = "^0.5"
+aiohttp = "^3.7"
+feedparser = "^6.0"
 pyppeteer = "^0.2"
 typing-extensions = "^3.7"
 
 [tool.poetry.dev-dependencies]
 black = "^20.8b"
 flake8 = "^3.8"
-ipython = "^7.19"
-jedi = "^0.17"
+ipython = "^7.20"
 pytest = "^6.2"
 
 [build-system]
