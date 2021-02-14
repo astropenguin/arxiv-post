@@ -1,11 +1,11 @@
-__all__ = ["DeepL", "Language", "translate"]
+from __future__ import annotations
 
 
 # standard library
 import asyncio
 from dataclasses import dataclass
 from enum import auto, Enum
-from typing import Awaitable, TypeVar, Union
+from typing import Awaitable, Union
 from urllib.parse import quote
 
 
@@ -21,23 +21,7 @@ SELECTOR: Final[str] = ".lmt__translations_as_text__text_btn"
 TIMEOUT: Final[int] = 30
 
 
-# type hints
-T = TypeVar("T")
-
-
-class Translatable(Protocol[T]):
-    """Protocol that defines translatable objects."""
-
-    def __str__(self) -> str:
-        """Return text to be translated."""
-        ...
-
-    def replace(text: str, translated: str) -> T:
-        """Replace text with translated one."""
-        ...
-
-
-# main features
+# enums
 class Language(Enum):
     """Available languages for translation."""
 
@@ -55,6 +39,32 @@ class Language(Enum):
     ZH = auto()  #: Chinese
 
 
+# type hints
+class Translatable(Protocol):
+    """Protocol that defines translatable objects."""
+
+    def __str__(self) -> str:
+        """Return text to be translated."""
+        ...
+
+    def replace(text: str, translated: str) -> Translatable:
+        """Replace text with translated one."""
+        ...
+
+
+class Translator(Protocol):
+    """Protocol that defines translator objects."""
+
+    lang_from: Union[Language, str]  #: Language of original text.
+    lang_to: Union[Language, str]  #: Language for translated text.
+    timeout: int  #: Timeout for translation (in seconds).
+
+    async def translate(self, obj: Translatable) -> Awaitable[Translatable]:
+        """Translate object written in one language to another."""
+        ...
+
+
+# data classes
 @dataclass
 class DeepL:
     """DeepL class for translating text."""
@@ -108,6 +118,7 @@ class DeepL:
         return translated
 
 
+# utility functions
 def translate(
     obj: Translatable,
     lang_to: Union[Language, str] = Language.AUTO,
