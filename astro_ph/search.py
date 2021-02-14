@@ -113,11 +113,16 @@ class Search:
                 return await resp.text()
 
         for start in range(0, self.n_max_articles, self.n_per_request):
+            max_results = min(
+                self.n_per_request,
+                self.n_max_articles - start,
+            )
+
             yield request(
                 ARXIV_API,
                 search_query=self.search_query,
                 start=start,
-                max_results=self.n_per_request,
+                max_results=max_results,
             )
 
 
