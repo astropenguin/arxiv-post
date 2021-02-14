@@ -5,5 +5,5 @@ __version__ = "0.1.0"
 
 # submodules
 from . import detex
-from . import deepl
 from . import search
+from . import translate
