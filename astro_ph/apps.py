@@ -5,10 +5,15 @@ from typing import (
     AsyncIterable,
     Awaitable,
     Callable,
+    Dict,
     Iterable,
+    Optional,
     TypeVar,
 )
+
+
 # third-party packages
+from aiohttp import ClientSession
 from typing_extensions import Protocol
 from .translate import Translator
 from .search import Article
@@ -17,6 +22,7 @@ from .search import Article
 # type hints
 S = TypeVar("S")
 T = TypeVar("T")
+Payload = Dict[str, str]
 
 
 class App(Protocol):
@@ -29,6 +35,65 @@ class App(Protocol):
         """Translate and post articles to somewhere."""
         ...
 
+
+# data classes
+@dataclass
+class Slack:
+    """Class for posting articles to Slack by incoming webhook."""
+
+    translator: Translator  #: Translator object.
+    n_concurrent: int = 5  #: Number of simultaneous processes.
+    webhook_url: str = ""  #: URL of Slack incoming webhook.
+
+    async def post(self, articles: AsyncIterable[Article]) -> Awaitable[None]:
+        """Translate and post articles to Slack."""
+        await amap(self._post, articles, self.n_concurrent)
+
+    async def _post(self, article: Article) -> Awaitable[None]:
+        """Translate and post an article to Slack."""
+        article = await self.translator.translate(article)
+        payload = self._to_payload(article)
+
+        async with ClientSession() as client:
+            await client.post(self.webhook_url, json=payload)
+
+    def _to_payload(self, article: Article) -> Payload:
+        """Convert article to payload for Slack post."""
+        authors_ = ", ".join(article.authors)
+        divider = self.divider()
+
+        title = self.header(self.plain_text(article.title))
+        authors = self.section(self.mrkdwn(f"*Authors:* {authors_}"))
+        summary = self.section(self.mrkdwn(f"*Summary:* {article.summary}"))
+        buttons = self.actions(
+            elements=[
+                self.button(
+                    self.plain_text("View arXiv"),
+                    url=article.arxiv_url,
+                ),
+                self.button(
+                    self.plain_text("View PDF"),
+                    url=article.arxiv_url.replace("abs", "pdf"),
+                ),
+                self.button(
+                    self.plain_text("View other formats"),
+                    url=article.arxiv_url.replace("abs", "format"),
+                ),
+            ]
+        )
+
+        return dict([divider, title, authors, summary, buttons, divider])
+
+    def __getattr__(self, type: str) -> Callable[[str], Payload]:
+        """Generate a function to create elements of Slack payload."""
+
+        def element(text: Optional[str] = None, **params) -> Payload:
+            if text is None:
+                return dict(type=type, **params)
+
+            return dict(text=text, type=type, **params)
+
+        return element
 
 
 # helper functions
