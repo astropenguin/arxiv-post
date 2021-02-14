@@ -1,13 +1,10 @@
-__all__ = ["detex"]
-
-
 # standard library
 import re
 from dataclasses import dataclass
 from typing import Pattern, Optional, Sequence, Union
 
 
-# constants
+# data classes
 @dataclass
 class Rule:
     """Rule class for replacing one string with another."""
@@ -24,6 +21,7 @@ class Rule:
         return self.pattern.sub(self.replacement, text)
 
 
+# constants
 DETEX_RULES = [
     Rule(r"\\text(bb|bf|it|gt|mc|md|rm|sc|sf|sl|tt|up){(.+?)}", r"\2"),
     Rule(r"{\\text(bb|bf|it|gt|mc|md|rm|sc|sf|sl|tt|up) (.+?)}", r"\2"),
@@ -33,7 +31,7 @@ DETEX_RULES = [
 ]
 
 
-# main feature
+# utility functions
 def detex(text: str, rules: Optional[Sequence[Rule]] = None) -> str:
     """Remove TeX's control commands from text."""
     if rules is None:
