@@ -1,12 +1,34 @@
 # standard library
 import asyncio
 from dataclasses import dataclass
-from typing import AsyncIterable, Awaitable, Callable, Iterable, TypeVar
+from typing import (
+    AsyncIterable,
+    Awaitable,
+    Callable,
+    Iterable,
+    TypeVar,
+)
+# third-party packages
+from typing_extensions import Protocol
+from .translate import Translator
+from .search import Article
 
 
 # type hints
 S = TypeVar("S")
 T = TypeVar("T")
+
+
+class App(Protocol):
+    """Protocol that defines application objects."""
+
+    translator: Translator  #: Translator object.
+    n_concurrent: int  #: Number of simultaneous processes.
+
+    async def post(self, articles: AsyncIterable[Article]) -> Awaitable:
+        """Translate and post articles to somewhere."""
+        ...
+
 
 
 # helper functions
