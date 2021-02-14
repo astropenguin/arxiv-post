@@ -87,6 +87,9 @@ class DeepL:
 
     async def translate(self, obj: Translatable) -> Awaitable[Translatable]:
         """Translate object written in one language to another."""
+        if self.lang_from == self.lang_to:
+            return obj
+
         text = str(obj)
         translated = await self._translate_text(text)
         return obj.replace(text, translated)
