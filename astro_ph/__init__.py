@@ -4,5 +4,4 @@ __version__ = "0.1.0"
 
 
 # aliases
-from .arxiv import *
 from .deepl import *
