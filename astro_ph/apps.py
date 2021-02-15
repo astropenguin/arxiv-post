@@ -77,10 +77,6 @@ class Slack:
                     self.plain_text("View PDF"),
                     url=article.arxiv_url.replace("abs", "pdf"),
                 ),
-                self.button(
-                    self.plain_text("View other formats"),
-                    url=article.arxiv_url.replace("abs", "format"),
-                ),
             ]
         )
 
