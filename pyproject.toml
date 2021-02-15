@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "astro-ph"
-version = "0.1.0"
-description = "Post astro-ph articles translated by DeepL to Slack"
+version = "0.2.0"
+description = "Translate and post arXiv articles to Slack"
 authors = ["Akio Taniguchi <taniguchi@a.phys.nagoya-u.ac.jp>"]
 license = "MIT"
 readme = "README.md"

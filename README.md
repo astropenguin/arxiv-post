@@ -5,4 +5,4 @@
 [![Test](https://img.shields.io/github/workflow/status/astropenguin/astro-ph/Test?logo=github&label=Test&style=flat-square)](https://github.com/astropenguin/astro-ph/actions)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg?label=License&style=flat-square)](LICENSE)
 
-Post astro-ph articles translated by DeepL to Slack
+Translate and post arXiv articles to Slack
