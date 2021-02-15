@@ -12,6 +12,7 @@ documentation = "https://astropenguin.github.io/astro-ph/"
 python = "^3.7"
 aiohttp = "^3.7"
 feedparser = "^6.0"
+fire = "^0.4"
 pyppeteer = "^0.2"
 typing-extensions = "^3.7"
 
