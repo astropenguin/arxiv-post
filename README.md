@@ -6,3 +6,15 @@
 [![License](https://img.shields.io/badge/license-MIT-blue.svg?label=License&style=flat-square)](LICENSE)
 
 Translate and post arXiv articles to Slack
+
+## Installation
+
+```shell
+$ pip install astro_ph
+```
+
+## Usage
+
+```shell
+$ astro-ph slack --help
+```
