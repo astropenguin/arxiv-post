@@ -14,9 +14,14 @@ from typing import (
 
 # third-party packages
 from aiohttp import ClientSession
-from typing_extensions import Protocol
+from typing_extensions import Final, Protocol
 from .translate import Translator
 from .search import Article
+
+
+# constants
+TIMEOUT: Final[int] = 60
+N_CONCURRENT: Final[int] = 10
 
 
 # type hints
@@ -43,8 +48,8 @@ class Slack:
     """Class for posting articles to Slack by incoming webhook."""
 
     translator: Translator  #: Translator object.
-    n_concurrent: int = 5  #: Number of simultaneous post execution.
-    timeout: int = 60  #: Timeout for each post execution (in seconds).
+    n_concurrent: int = N_CONCURRENT  #: Number of simultaneous post execution.
+    timeout: int = TIMEOUT  #: Timeout for each post execution (in seconds).
     webhook_url: str = ""  #: URL of Slack incoming webhook.
 
     async def post(self, articles: AsyncIterable[Article]) -> Awaitable[None]:
@@ -98,8 +103,8 @@ class Slack:
 async def amap(
     afunc: Callable[[S], Awaitable[T]],
     aiterable: AsyncIterable[S],
-    n_concurrent: int = 5,
-    timeout: int = 60,
+    n_concurrent: int = N_CONCURRENT,
+    timeout: int = TIMEOUT,
 ) -> Awaitable[Iterable[T]]:
     """Async map function.
 
