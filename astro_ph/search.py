@@ -18,6 +18,9 @@ from .detex import detex
 # constants
 ARXIV_API: Final[str] = "http://export.arxiv.org/api/query"
 DATE_FORMAT: Final[str] = "%Y%m%d%H%M%S"
+N_CONCURRENT: Final[int] = 1
+N_MAX_ARTICLES: Final[int] = 1000
+N_PER_REQUEST: Final[int] = 100
 SECOND: Final[timedelta] = timedelta(seconds=1)
 SEPARATOR: Final[str] = "++++++++++"
 
@@ -54,9 +57,9 @@ class Search:
     date_end: Union[datetime, str]  #: End date for a search (exclusive).
     keywords: Optional[Sequence[str]] = None  #: Keywords for a search.
     categories: Optional[Sequence[str]] = None  #: arXiv categories.
-    n_max_articles: int = 1000  #: Maximum number of articles to get.
-    n_per_request: int = 100  #: Number of articles to get per request.
-    n_concurrent: int = 1  #: Number of simultaneous requests (do not change).
+    n_max_articles: int = N_MAX_ARTICLES  #: Maximum number of articles to get.
+    n_per_request: int = N_PER_REQUEST  #: Number of articles to get per request.
+    n_concurrent: int = N_CONCURRENT  #: Number of simultaneous requests.
 
     def __post_init__(self) -> None:
         if not isinstance(self.date_start, datetime):
@@ -137,9 +140,9 @@ def search(
     date_end: Union[datetime, str],
     keywords: Optional[Sequence[str]] = None,
     categories: Optional[Sequence[str]] = None,
-    n_max_articles: int = 1000,
-    n_per_request: int = 100,
-    n_concurrent: int = 1,
+    n_max_articles: int = N_MAX_ARTICLES,
+    n_per_request: int = N_PER_REQUEST,
+    n_concurrent: int = N_CONCURRENT,
 ) -> Sequence[Article]:
     """Search for articles in arXiv with given conditions.
 
@@ -150,7 +153,7 @@ def search(
         categories: arXiv categories.
         n_max_articles: Maximum number of articles to get.
         n_per_request: Number of articles to get per request.
-        n_concurrent: Number of simultaneous requests (do not change).
+        n_concurrent: Number of simultaneous requests.
 
     Returns:
         List of articles found in arXiv.

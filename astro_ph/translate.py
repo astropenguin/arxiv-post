@@ -18,7 +18,7 @@ from typing_extensions import Final, Protocol
 DEEPL_URL: Final[str] = "https://www.deepl.com/translator"
 JS_FUNC: Final[str] = "element => element.textContent"
 SELECTOR: Final[str] = ".lmt__translations_as_text__text_btn"
-TIMEOUT: Final[int] = 30
+TIMEOUT: Final[int] = 60
 
 
 # enums
