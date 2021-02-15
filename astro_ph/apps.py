@@ -29,7 +29,8 @@ class App(Protocol):
     """Protocol that defines application objects."""
 
     translator: Translator  #: Translator object.
-    n_concurrent: int  #: Number of simultaneous processes.
+    n_concurrent: int  #: Number of simultaneous post execution.
+    timeout: int  #: Timeout for each post execution.
 
     async def post(self, articles: AsyncIterable[Article]) -> Awaitable:
         """Translate and post articles to somewhere."""
@@ -42,12 +43,13 @@ class Slack:
     """Class for posting articles to Slack by incoming webhook."""
 
     translator: Translator  #: Translator object.
-    n_concurrent: int = 5  #: Number of simultaneous processes.
+    n_concurrent: int = 5  #: Number of simultaneous post execution.
+    timeout: int = 60  #: Timeout for each post execution (in seconds).
     webhook_url: str = ""  #: URL of Slack incoming webhook.
 
     async def post(self, articles: AsyncIterable[Article]) -> Awaitable[None]:
         """Translate and post articles to Slack."""
-        await amap(self._post, articles, self.n_concurrent)
+        await amap(self._post, articles, self.n_concurrent, self.timeout)
 
     async def _post(self, article: Article) -> Awaitable[None]:
         """Translate and post an article to Slack."""
@@ -101,13 +103,15 @@ async def amap(
     afunc: Callable[[S], Awaitable[T]],
     aiterable: AsyncIterable[S],
     n_concurrent: int = 5,
+    timeout: int = 60,
 ) -> Awaitable[Iterable[T]]:
     """Async map function.
 
     Args:
         afunc: Coroutine function.
         aiterable: Async iterable that yields args of afunc.
-        n_concurrent: Number of concurrent processes.
+        n_concurrent: Number of concurrent execution.
+        timeout: Timeout for each afunc execution (in seconds).
 
     Returns:
         Generator that yields results of afunc.
@@ -119,14 +123,20 @@ async def amap(
     # step 1: create consumer coroutines
     async def consume() -> Awaitable[None]:
         async def _consume() -> Awaitable[None]:
-            while True:
-                arg = await queue_in.get()
-                result = await afunc(arg)
+            arg = await queue_in.get()
+            coro = asyncio.wait_for(afunc(arg), timeout)
+
+            try:
+                result = await coro
+            except asyncio.TimeoutError as err:
+                result = err
+            finally:
                 await queue_out.put(result)
                 queue_in.task_done()
 
         try:
-            await _consume()
+            while True:
+                await _consume()
         except asyncio.CancelledError:
             pass
 

@@ -19,6 +19,7 @@ KEYWORDS: Final[str] = "galaxy,galaxies"
 CATEGORIES: Final[str] = "astro-ph.GA"
 LANG_FROM: Final[str] = "en"
 LANG_TO: Final[str] = "auto"
+TIMEOUT: Final[int] = 60
 
 
 # helper functions
@@ -46,6 +47,7 @@ def slack(
     categories: str = CATEGORIES,
     lang_from: str = LANG_FROM,
     lang_to: str = LANG_TO,
+    timeout: int = TIMEOUT,
     webhook_url: Optional[str] = None,
 ) -> None:
     """Translate and post articles to Slack.
@@ -57,6 +59,7 @@ def slack(
         categories: Comma-separated arXiv categories.
         lang_from: Language of original text in articles.
         lang_to: Language for translated text in articles.
+        timeout: Timeout for each post execution (in seconds).
         webhook_url: URL of Slack incoming webhook.
 
     Returns:
