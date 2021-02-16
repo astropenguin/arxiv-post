@@ -4,7 +4,7 @@ __version__ = "0.2.0"
 
 
 # submodules
+from . import article
 from . import apps
-from . import detex
 from . import search
 from . import translate
