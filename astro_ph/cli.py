@@ -73,7 +73,7 @@ def slack(
     categories = parse_multiple(categories)
 
     articles = Search(date_start, date_end, keywords, categories)
-    app = Slack(DeepL(lang_from, lang_to), webhook_url=webhook_url)
+    app = Slack(DeepL(lang_from, lang_to), timeout, webhook_url)
     asyncio.run(app.post(articles))
 
 
