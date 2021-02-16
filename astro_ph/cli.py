@@ -81,7 +81,3 @@ def slack(
 def cli() -> None:
     """Entry point of command line interface."""
     Fire(dict(slack=slack))
-
-
-if __name__ == "__main__":
-    cli()
