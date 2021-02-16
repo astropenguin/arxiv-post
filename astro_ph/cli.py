@@ -19,6 +19,7 @@ KEYWORDS: Final[str] = "galaxy,galaxies"
 CATEGORIES: Final[str] = "astro-ph.GA"
 LANG_FROM: Final[str] = "en"
 LANG_TO: Final[str] = "auto"
+N_CONCURRENT: Final[int] = 2
 TIMEOUT: Final[int] = 60
 
 
@@ -48,6 +49,7 @@ def slack(
     lang_from: str = LANG_FROM,
     lang_to: str = LANG_TO,
     timeout: int = TIMEOUT,
+    n_concurrent: int = N_CONCURRENT,
     webhook_url: Optional[str] = None,
 ) -> None:
     """Translate and post articles to Slack.
@@ -60,6 +62,7 @@ def slack(
         lang_from: Language of original text in articles.
         lang_to: Language for translated text in articles.
         timeout: Timeout for each post execution (in seconds).
+        n_concurrent: Number of simultaneous execution.
         webhook_url: URL of Slack incoming webhook.
 
     Returns:
@@ -73,7 +76,7 @@ def slack(
     categories = parse_multiple(categories)
 
     articles = Search(date_start, date_end, keywords, categories)
-    app = Slack(DeepL(lang_from, lang_to), webhook_url=webhook_url)
+    app = Slack(DeepL(lang_from, lang_to), n_concurrent, timeout, webhook_url)
     asyncio.run(app.post(articles))
 
 
@@ -81,7 +84,3 @@ def slack(
 def cli() -> None:
     """Entry point of command line interface."""
     Fire(dict(slack=slack))
-
-
-if __name__ == "__main__":
-    cli()
