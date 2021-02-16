@@ -1,5 +1,5 @@
 # third-party packages
-from astro_ph.detex import detex
+from astro_ph.article import detex
 from pytest import mark
 from typing_extensions import Final
 
