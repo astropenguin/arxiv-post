@@ -5,6 +5,7 @@ from __future__ import annotations
 import asyncio
 from dataclasses import dataclass
 from datetime import datetime, timedelta
+from logging import getLogger
 from typing import AsyncIterable, Awaitable, Iterable, Optional, Sequence, Union
 
 
@@ -22,6 +23,10 @@ N_CONCURRENT: Final[int] = 1
 N_MAX_ARTICLES: Final[int] = 1000
 N_PER_REQUEST: Final[int] = 100
 SECOND: Final[timedelta] = timedelta(seconds=1)
+
+
+# module-level logger
+logger = getLogger(__name__)
 
 
 # data classes
@@ -94,6 +99,7 @@ class Search:
 
         async def request(url: str, **params) -> Awaitable[str]:
             async with client.get(url, params=params) as resp:
+                logger.debug(resp.url)
                 return await resp.text()
 
         for start in range(0, self.n_max_articles, self.n_per_request):
