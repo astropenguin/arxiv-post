@@ -5,6 +5,7 @@ from __future__ import annotations
 import asyncio
 from dataclasses import dataclass
 from enum import auto, Enum
+from logging import getLogger
 from typing import Awaitable, Union
 from urllib.parse import quote
 
@@ -19,6 +20,10 @@ DEEPL_URL: Final[str] = "https://www.deepl.com/translator"
 JS_FUNC: Final[str] = "element => element.textContent"
 SELECTOR: Final[str] = ".lmt__translations_as_text__text_btn"
 TIMEOUT: Final[int] = 60
+
+
+# module-level logger
+logger = getLogger(__name__)
 
 
 # enums
@@ -81,7 +86,7 @@ class DeepL:
             self.lang_to = Language[self.lang_to.upper()]
 
     @property
-    def url(self) -> str:
+    def base_url(self) -> str:
         """Base URL of translation."""
         return f"{DEEPL_URL}#/{self.lang_from.name}/{self.lang_to.name}"
 
@@ -96,13 +101,16 @@ class DeepL:
 
     async def _translate_text(self, text: str) -> Awaitable[str]:
         """Translate text written in one language to another."""
+        url = f"{self.base_url}/{quote(text)}"
+        logger.debug(f"{url:.300}...")
+
         browser = await launch()
         page = await browser.newPage()
         page.setDefaultNavigationTimeout(self.timeout * 1000)
         completion = self._translation_completion(page)
 
         try:
-            await page.goto(f"{self.url}/{quote(text)}")
+            await page.goto(url)
             return await asyncio.wait_for(completion, self.timeout)
         except asyncio.TimeoutError as err:
             raise type(err)("Translation was timed out.")
