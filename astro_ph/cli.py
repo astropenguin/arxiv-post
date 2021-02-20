@@ -11,6 +11,7 @@ from typing_extensions import Final
 from .apps import Slack
 from .search import Search
 from .translate import DeepL
+from . import __name__ as PACKAGE_NAME
 
 
 # constants
@@ -87,7 +88,7 @@ def slack(
     )
 
     level = getLevelName(log_level.upper())
-    getLogger("astro_ph").setLevel(level)
+    getLogger(PACKAGE_NAME).setLevel(level)
 
     if webhook_url is None:
         raise ValueError("Webhook URL must be specified.")
