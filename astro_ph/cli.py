@@ -20,7 +20,8 @@ KEYWORDS: Final[str] = "galaxy,galaxies"
 CATEGORIES: Final[str] = "astro-ph.GA"
 LANG_FROM: Final[str] = "en"
 LANG_TO: Final[str] = "auto"
-LOG_FORMAT: Final[str] = "{asctime} {name: <18} {levelname: <8} {message}"
+LOG_DATEFMT: Final[str] = "%Y-%m-%d %H:%M:%S"
+LOG_FORMAT: Final[str] = "[{asctime} {name} {levelname}]: {message}"
 LOG_LEVEL: Final[str] = "WARNING"
 LOG_STYLE: Final[str] = "{"
 N_CONCURRENT: Final[int] = 2
@@ -80,10 +81,13 @@ def slack(
 
     """
     basicConfig(
+        datefmt=LOG_DATEFMT,
         format=LOG_FORMAT,
         style=LOG_STYLE,
-        level=getLevelName(log_level.upper()),
     )
+
+    level = getLevelName(log_level.upper())
+    getLogger("astro_ph").setLevel(level)
 
     if webhook_url is None:
         raise ValueError("Webhook URL must be specified.")
@@ -95,9 +99,9 @@ def slack(
     translator = DeepL(lang_from, lang_to)
     app = Slack(translator, n_concurrent, timeout, webhook_url)
 
-    logger.info(articles)
-    logger.info(translator)
-    logger.info(app)
+    logger.debug(articles)
+    logger.debug(translator)
+    logger.debug(app)
 
     asyncio.run(app.post(articles))
 
