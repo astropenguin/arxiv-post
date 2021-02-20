@@ -1,6 +1,7 @@
 # standard library
 import asyncio
 from dataclasses import dataclass
+from logging import getLogger
 from typing import (
     AsyncIterable,
     Awaitable,
@@ -22,6 +23,10 @@ from .search import Article
 # constants
 TIMEOUT: Final[int] = 60
 N_CONCURRENT: Final[int] = 10
+
+
+# module-level logger
+logger = getLogger(__name__)
 
 
 # type hints
@@ -62,7 +67,8 @@ class Slack:
         payload = self._to_payload(article)
 
         async with ClientSession() as client:
-            await client.post(self.webhook_url, json=payload)
+            async with client.post(self.webhook_url, json=payload) as resp:
+                logger.debug(f"{str(resp.url):.300}...")
 
         await asyncio.sleep(1.0)
 

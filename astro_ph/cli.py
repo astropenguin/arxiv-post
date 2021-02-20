@@ -1,6 +1,7 @@
 # standard library
 import asyncio
 from datetime import date, datetime, time, timedelta
+from logging import basicConfig, getLevelName, getLogger
 from typing import Optional, Union
 
 
@@ -10,6 +11,7 @@ from typing_extensions import Final
 from .apps import Slack
 from .search import Search
 from .translate import DeepL
+from . import __name__ as PACKAGE_NAME
 
 
 # constants
@@ -19,8 +21,16 @@ KEYWORDS: Final[str] = "galaxy,galaxies"
 CATEGORIES: Final[str] = "astro-ph.GA"
 LANG_FROM: Final[str] = "en"
 LANG_TO: Final[str] = "auto"
+LOG_DATEFMT: Final[str] = "%Y-%m-%d %H:%M:%S"
+LOG_FORMAT: Final[str] = "[{asctime} {name} {levelname}]: {message}"
+LOG_LEVEL: Final[str] = "WARNING"
+LOG_STYLE: Final[str] = "{"
 N_CONCURRENT: Final[int] = 2
 TIMEOUT: Final[int] = 60
+
+
+# module-level logger
+logger = getLogger(__name__)
 
 
 # helper functions
@@ -51,6 +61,7 @@ def slack(
     timeout: int = TIMEOUT,
     n_concurrent: int = N_CONCURRENT,
     webhook_url: Optional[str] = None,
+    log_level: str = LOG_LEVEL,
 ) -> None:
     """Translate and post articles to Slack.
 
@@ -64,11 +75,21 @@ def slack(
         timeout: Timeout for each post execution (in seconds).
         n_concurrent: Number of simultaneous execution.
         webhook_url: URL of Slack incoming webhook.
+        log_level: Lowest level of log messages to show.
 
     Returns:
         This command does not return anything.
 
     """
+    basicConfig(
+        datefmt=LOG_DATEFMT,
+        format=LOG_FORMAT,
+        style=LOG_STYLE,
+    )
+
+    level = getLevelName(log_level.upper())
+    getLogger(PACKAGE_NAME).setLevel(level)
+
     if webhook_url is None:
         raise ValueError("Webhook URL must be specified.")
 
@@ -76,7 +97,13 @@ def slack(
     categories = parse_multiple(categories)
 
     articles = Search(date_start, date_end, keywords, categories)
-    app = Slack(DeepL(lang_from, lang_to), n_concurrent, timeout, webhook_url)
+    translator = DeepL(lang_from, lang_to)
+    app = Slack(translator, n_concurrent, timeout, webhook_url)
+
+    logger.debug(articles)
+    logger.debug(translator)
+    logger.debug(app)
+
     asyncio.run(app.post(articles))
 
 
