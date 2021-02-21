@@ -12,7 +12,7 @@ Translate and post arXiv articles to various apps
 Use pip or other package manager to install the Python package.
 
 ```shell
-$ pip install astro_ph
+$ pip install astro-ph
 ```
 
 ## Usage
