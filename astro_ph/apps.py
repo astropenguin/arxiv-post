@@ -76,7 +76,7 @@ class Slack:
         """Convert article to payload for Slack post."""
         divider = self.divider()
         title = self.header(self.plain_text(translated.title))
-        title_ = self.section(self.mrkdwn(f"*Original title:* {original.title}"))
+        title_ = self.section(self.mrkdwn(f"*Title:* {original.title}"))
         authors = self.section(self.mrkdwn(f"*Authors:* {', '.join(original.authors)}"))
         summary = self.section(self.mrkdwn(f"*Summary:* {translated.summary}"))
         buttons = self.actions(
