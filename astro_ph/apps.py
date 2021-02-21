@@ -63,8 +63,8 @@ class Slack:
 
     async def _post(self, article: Article) -> Awaitable[None]:
         """Translate and post an article to Slack."""
-        article = await self.translator.translate(article)
-        payload = self._to_payload(article)
+        translated = await self.translator.translate(article)
+        payload = self._to_payload(article, translated)
 
         async with ClientSession() as client:
             async with client.post(self.webhook_url, json=payload) as resp:
@@ -72,28 +72,27 @@ class Slack:
 
         await asyncio.sleep(1.0)
 
-    def _to_payload(self, article: Article) -> Payload:
+    def _to_payload(self, original: Article, translated: Article) -> Payload:
         """Convert article to payload for Slack post."""
-        authors_ = ", ".join(article.authors)
         divider = self.divider()
-
-        title = self.header(self.plain_text(article.title))
-        authors = self.section(self.mrkdwn(f"*Authors:* {authors_}"))
-        summary = self.section(self.mrkdwn(f"*Summary:* {article.summary}"))
+        title = self.header(self.plain_text(translated.title))
+        title_ = self.section(self.mrkdwn(f"*Original title:* {original.title}"))
+        authors = self.section(self.mrkdwn(f"*Authors:* {', '.join(original.authors)}"))
+        summary = self.section(self.mrkdwn(f"*Summary:* {translated.summary}"))
         buttons = self.actions(
             elements=[
                 self.button(
                     self.plain_text("View arXiv"),
-                    url=article.arxiv_url,
+                    url=original.arxiv_url,
                 ),
                 self.button(
                     self.plain_text("View PDF"),
-                    url=article.arxiv_url.replace("abs", "pdf"),
+                    url=original.arxiv_url.replace("abs", "pdf"),
                 ),
             ]
         )
 
-        return dict(blocks=[divider, title, authors, summary, buttons, divider])
+        return dict(blocks=[divider, title, title_, authors, summary, buttons, divider])
 
     def __getattr__(self, type: str) -> Callable[[str], Payload]:
         """Generate a function to create elements of Slack payload."""
