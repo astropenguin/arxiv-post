@@ -92,7 +92,8 @@ class Slack:
             ]
         )
 
-        return dict(blocks=[divider, title, title_, authors, summary, buttons, divider])
+        blocks = [divider, title, title_, authors, summary, buttons, divider]
+        return dict(text=translated.title, blocks=blocks)
 
     def __getattr__(self, type: str) -> Callable[[str], Payload]:
         """Generate a function to create elements of Slack payload."""
