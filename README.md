@@ -28,6 +28,10 @@ $ astro-ph slack --keywords galaxy,galaxies \
                  --webhook_url https://hooks.slack.com/services/***/***
 ```
 
+The posted article looks like this.
+
+![astro-ph-slack.png](https://raw.githubusercontent.com/astropenguin/astro-ph/master/docs/_static/astro-ph-slack.png)
+
 For detailed information, see the built-in help by the following command.
 
 ```shell
