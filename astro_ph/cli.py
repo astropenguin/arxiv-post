@@ -1,8 +1,8 @@
 # standard library
 import asyncio
 from datetime import date, datetime, time, timedelta
-from logging import basicConfig, getLevelName, getLogger
-from typing import Optional, Union
+from logging import basicConfig, DEBUG, getLogger
+from typing import Union
 
 
 # third-party packages
@@ -11,21 +11,21 @@ from typing_extensions import Final
 from .apps import Slack
 from .search import Search
 from .translate import DeepL
-from . import __name__ as PACKAGE_NAME
 
 
 # constants
-COMMA: Final[str] = ","
-DATE_FORMAT: Final[str] = "%Y-%m-%d"
-KEYWORDS: Final[str] = "galaxy,galaxies"
-CATEGORIES: Final[str] = "astro-ph.GA"
+CATEGORIES: Final[str] = (
+    "astro-ph.CO,"
+    "astro-ph.EP,"
+    "astro-ph.GA,"
+    "astro-ph.HE,"
+    "astro-ph.IM,"
+    "astro-ph.SR"
+)
+KEYWORDS: Final[str] = ""
 LANG_FROM: Final[str] = "en"
 LANG_TO: Final[str] = "auto"
-LOG_DATEFMT: Final[str] = "%Y-%m-%d %H:%M:%S"
-LOG_FORMAT: Final[str] = "[{asctime} {name} {levelname}]: {message}"
-LOG_LEVEL: Final[str] = "WARNING"
-LOG_STYLE: Final[str] = "{"
-N_CONCURRENT: Final[int] = 2
+N_CONCURRENT: Final[int] = 10
 TIMEOUT: Final[int] = 60
 
 
@@ -37,17 +37,34 @@ logger = getLogger(__name__)
 def n_days_ago(n: int) -> str:
     """Return string of date n days ago in YYYY-mm-dd."""
     today = datetime.combine(date.today(), time())
-    return (today - timedelta(days=n)).strftime(DATE_FORMAT)
+    return (today - timedelta(days=n)).strftime("%Y-%m-%d")
 
 
-def parse_multiple(obj: Union[list, tuple, str]) -> str:
+def parse_multiple(obj: Union[list, tuple, str], sep: str = ",") -> list:
     """Parse comma-separated multiple values correctly."""
+
+    def remove_empty(strings: list) -> list:
+        return [s for s in strings if s != ""]
+
     if isinstance(obj, str):
-        return obj.split(COMMA)
-    elif isinstance(obj, (list, tuple)):
-        return COMMA.join(obj).split(COMMA)
-    else:
-        raise ValueError(f"Invalid value: {obj:!r}")
+        return remove_empty(obj.split(sep))
+
+    if isinstance(obj, (list, tuple)):
+        return remove_empty(sep.join(obj).split(sep))
+
+    raise ValueError(f"Invalid value: {obj:!r}")
+
+
+def configure_logging(debug: bool = False) -> None:
+    """Configure logging format and level for CLI."""
+    basicConfig(
+        datefmt="%Y-%m%d %H:%M:%S",
+        format="[{asctime} {name} {levelname}]: {message}",
+        style="{",
+    )
+
+    if debug:
+        getLogger("astro_ph").setLevel(DEBUG)
 
 
 # subcommand functions
@@ -60,8 +77,8 @@ def slack(
     lang_to: str = LANG_TO,
     timeout: int = TIMEOUT,
     n_concurrent: int = N_CONCURRENT,
-    webhook_url: Optional[str] = None,
-    log_level: str = LOG_LEVEL,
+    webhook_url: str = "",
+    debug: bool = False,
 ) -> None:
     """Translate and post articles to Slack.
 
@@ -75,22 +92,15 @@ def slack(
         timeout: Timeout for each post execution (in seconds).
         n_concurrent: Number of simultaneous execution.
         webhook_url: URL of Slack incoming webhook.
-        log_level: Lowest level of log messages to show.
+        debug: If True, debug-level log messages are shown.
 
     Returns:
         This command does not return anything.
 
     """
-    basicConfig(
-        datefmt=LOG_DATEFMT,
-        format=LOG_FORMAT,
-        style=LOG_STYLE,
-    )
+    configure_logging(debug)
 
-    level = getLevelName(log_level.upper())
-    getLogger(PACKAGE_NAME).setLevel(level)
-
-    if webhook_url is None:
+    if not webhook_url:
         raise ValueError("Webhook URL must be specified.")
 
     keywords = parse_multiple(keywords)
