@@ -75,8 +75,8 @@ class Slack:
     def _to_payload(self, original: Article, translated: Article) -> Payload:
         """Convert article to payload for Slack post."""
         divider = self.divider()
-        title = self.header(self.plain_text(translated.title))
-        title_ = self.section(self.mrkdwn(f"*Title:* {original.title}"))
+        header = self.header(self.plain_text(translated.title))
+        title = self.section(self.mrkdwn(f"*Title:* {original.title}"))
         authors = self.section(self.mrkdwn(f"*Authors:* {', '.join(original.authors)}"))
         summary = self.section(self.mrkdwn(f"*Summary:* {translated.summary}"))
         buttons = self.actions(
@@ -92,7 +92,7 @@ class Slack:
             ]
         )
 
-        blocks = [divider, title, title_, authors, summary, buttons, divider]
+        blocks = [divider, header, title, authors, summary, buttons, divider]
         return dict(text=translated.title, blocks=blocks)
 
     def __getattr__(self, type: str) -> Callable[[str], Payload]:
