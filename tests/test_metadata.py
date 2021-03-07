@@ -5,7 +5,7 @@ from typing_extensions import Final
 
 # constants
 AUTHOR: Final[str] = "Akio Taniguchi"
-VERSION: Final[str] = "0.2.3"
+VERSION: Final[str] = "0.2.4"
 
 
 # test functions

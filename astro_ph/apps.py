@@ -70,7 +70,7 @@ class Slack:
             async with client.post(self.webhook_url, json=payload) as resp:
                 logger.debug(f"{str(resp.url):.300}...")
 
-        await asyncio.sleep(1.0)
+        await asyncio.sleep(3.0)
 
     def _to_payload(self, original: Article, translated: Article) -> Payload:
         """Convert article to payload for Slack post."""
