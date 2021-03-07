@@ -1,4 +1,4 @@
-name: Test
+name: Tests
 
 on:
   push:
@@ -10,7 +10,7 @@ on:
 
 jobs:
   job:
-    name: Test
+    name: Test ${{ matrix.python-version }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -27,9 +27,9 @@ jobs:
           pip install poetry
           poetry install
       - name: Lint by Flake8
-        run: poetry run flake8 docs tests astro_ph
+        run: poetry run flake8 astro_ph docs tests
       - name: Format by Black
-        run: poetry run black --check docs tests astro_ph
+        run: poetry run black --check astro_ph docs tests
       - name: Test by pytest
         run : poetry run pytest -v tests
       - name: Build docs
