@@ -11,14 +11,13 @@ from urllib.parse import quote
 
 
 # third-party packages
-from pyppeteer import launch
+from playwright.async_api import async_playwright, TimeoutError
 from typing_extensions import Final, Protocol
 
 
 # constants
 DEEPL_URL: Final[str] = "https://www.deepl.com/translator"
-JS_FUNC: Final[str] = "element => element.textContent"
-SELECTOR: Final[str] = ".lmt__translations_as_text__text_btn"
+SELECTOR = "#target-dummydiv"
 TIMEOUT: Final[int] = 60
 
 
@@ -96,37 +95,25 @@ class DeepL:
             return obj
 
         text = str(obj)
-        translated = await self._translate_text(text)
-        return obj.replace(text, translated)
-
-    async def _translate_text(self, text: str) -> Awaitable[str]:
-        """Translate text written in one language to another."""
         url = f"{self.base_url}/{quote(text)}"
         logger.debug(f"{url:.300}...")
 
-        browser = await launch()
-        page = await browser.newPage()
-        page.setDefaultNavigationTimeout(self.timeout * 1000)
-        completion = self._translation_completion(page)
+        async with async_playwright() as p:
+            browser = await p.chromium.launch()
 
-        try:
-            await page.goto(url)
-            return await asyncio.wait_for(completion, self.timeout)
-        except asyncio.TimeoutError as err:
-            raise type(err)("Translation was timed out.")
-        finally:
-            await browser.close()
+            page = await browser.new_page()
+            page.set_default_timeout(1e3 * self.timeout)
 
-    async def _translation_completion(self, page) -> Awaitable[str]:
-        """Wait for completion of translation and return result."""
-        translated = ""
+            try:
+                await page.goto(url, wait_until="networkidle")
+                elem = await page.query_selector(SELECTOR)
+                translated = await elem.text_content()
+            except TimeoutError as err:
+                raise type(err)("Translation was timed out.")
+            finally:
+                await browser.close()
 
-        while not translated:
-            await asyncio.sleep(1.0)
-            element = await page.querySelector(SELECTOR)
-            translated = await page.evaluate(JS_FUNC, element)
-
-        return translated
+        return obj.replace(text, translated.strip())
 
 
 # utility functions
