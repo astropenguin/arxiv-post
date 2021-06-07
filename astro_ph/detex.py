@@ -1,17 +1,22 @@
 import re
 from dataclasses import dataclass
+from typing import cast, Pattern, Union
 
 
 @dataclass
 class ReplaceRule:
-    pattern: str
+    """Class for defining rules to replace texts."""
+
+    pattern: Union[Pattern[str], str]
     replacement: str
 
     def __post_init__(self):
-        self._pattern = re.compile(self.pattern)
+        self.pattern = re.compile(self.pattern)
 
     def apply(self, text: str) -> str:
-        return self._pattern.sub(self.replacement, text)
+        """Apply the rule to a text."""
+        pattern = cast(Pattern[str], self.pattern)
+        return pattern.sub(self.replacement, text)
 
 
 DETEX_RULES = [
@@ -24,7 +29,7 @@ DETEX_RULES = [
 
 
 def detex(text: str) -> str:
-    """Remove TeX's control commands from text."""
+    """Remove TeX's control commands from a text."""
     for rule in DETEX_RULES:
         text = rule.apply(text)
 
