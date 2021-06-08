@@ -1,6 +1,6 @@
 import re
 from dataclasses import dataclass
-from typing import cast, Pattern, Union
+from typing import Pattern, Union
 
 
 @dataclass
@@ -11,12 +11,11 @@ class ReplaceRule:
     replacement: str
 
     def __post_init__(self):
-        self.pattern = re.compile(self.pattern)
+        self._pattern = re.compile(self.pattern)
 
     def apply(self, text: str) -> str:
         """Apply the rule to a text."""
-        pattern = cast(Pattern[str], self.pattern)
-        return pattern.sub(self.replacement, text)
+        return self._pattern.sub(self.replacement, text)
 
 
 DETEX_RULES = [
