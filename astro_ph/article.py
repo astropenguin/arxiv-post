@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 from dataclasses import dataclass, replace
 from typing import cast, ClassVar, Sequence
 
@@ -9,14 +10,12 @@ from .detex import detex
 
 @dataclass
 class Article:
-    """Class for article information."""
-
     title: str  #: Title of the article.
     authors: Sequence[str]  #: Author list of the article.
     summary: str  #: Summary (abstract) of the article.
     arxiv_url: str  #: arXiv URL of the article.
 
-    SEPARATOR: ClassVar[str] = "++++++++++++"
+    _SEPARATOR: ClassVar[str] = "++++++++++++"
 
     def __post_init__(self) -> None:
         self.title = detex(self.title)
@@ -28,18 +27,18 @@ class Article:
 
     @classmethod
     def from_arxiv_result(cls, result: Result) -> Article:
-        authors = [author.name for author in result.authors]  # type: ignore
+        authors = [cast(str, a.name) for a in result.authors]  # type: ignore
 
         return Article(
             title=result.title,
-            authors=cast(Sequence[str], authors),
+            authors=authors,
             summary=result.summary,
             arxiv_url=str(result),
         )
 
     def replace(self, original: str, translated: str) -> Article:
-        title, summary = translated.split(self.SEPARATOR)
+        title, summary = translated.split(self._SEPARATOR)
         return replace(self, title=title, summary=summary)
 
     def __str__(self) -> str:
-        return f"{self.title}\n{self.SEPARATOR}\n{self.summary}"
+        return f"{self.title}\n{self._SEPARATOR}\n{self.summary}"
