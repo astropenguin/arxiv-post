@@ -5,17 +5,16 @@ from typing import Pattern, Union
 
 @dataclass
 class ReplaceRule:
-    """Class for defining rules to replace texts."""
+    """Class for replacing rules of texts."""
 
     pattern: Union[Pattern[str], str]
     replacement: str
 
-    def __post_init__(self):
-        self._pattern = re.compile(self.pattern)
-
     def apply(self, text: str) -> str:
-        """Apply the rule to a text."""
-        return self._pattern.sub(self.replacement, text)
+        if isinstance(self.pattern, str):
+            self.pattern = re.compile(self.pattern)
+
+        return self.pattern.sub(self.replacement, text)
 
 
 DETEX_RULES = [
