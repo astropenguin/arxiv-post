@@ -1,139 +1,126 @@
 from __future__ import annotations
 
-
-# standard library
-import asyncio
-from dataclasses import dataclass
-from enum import auto, Enum
-from logging import getLogger
-from typing import Awaitable, Union
+from asyncio import gather, Semaphore, sleep, run
+from typing import Awaitable, Callable, Iterable, List, Protocol, TypeVar
 from urllib.parse import quote
 
+from playwright.async_api import async_playwright, Page, TimeoutError
 
-# third-party packages
-from playwright.async_api import async_playwright, TimeoutError
-from typing_extensions import Final, Protocol
-
-
-# constants
-DEEPL_URL: Final[str] = "https://www.deepl.com/translator"
-SELECTOR = "#target-dummydiv"
-TIMEOUT: Final[int] = 60
+from .constants import Language, N_CONCURRENT, TIMEOUT
 
 
-# module-level logger
-logger = getLogger(__name__)
+DEEPL_SEL = "#target-dummydiv"
+DEEPL_URL = "https://deepl.com/translator"
+S = TypeVar("S")
+T = TypeVar("T")
 
 
-# enums
-class Language(Enum):
-    """Available languages for translation."""
-
-    AUTO = auto()  #: Auto language detection
-    DE = auto()  #: German
-    EN = auto()  #: English
-    FR = auto()  #: French
-    IT = auto()  #: Italian
-    JA = auto()  #: Japanese
-    ES = auto()  #: Spanish
-    NL = auto()  #: Dutch
-    PL = auto()  #: Polish
-    PT = auto()  #: Portuguese
-    RU = auto()  #: Russian
-    ZH = auto()  #: Chinese
-
-
-# type hints
 class Translatable(Protocol):
-    """Protocol that defines translatable objects."""
+    """Protocol for translatable objects."""
+
+    def replace(self: T, original: str, translated: str) -> T:
+        ...
 
     def __str__(self) -> str:
-        """Return text to be translated."""
-        ...
-
-    def replace(text: str, translated: str) -> Translatable:
-        """Replace text with translated one."""
         ...
 
 
-class Translator(Protocol):
-    """Protocol that defines translator objects."""
-
-    lang_from: Union[Language, str]  #: Language of original text.
-    lang_to: Union[Language, str]  #: Language for translated text.
-    timeout: int  #: Timeout for translation (in seconds).
-
-    async def translate(self, obj: Translatable) -> Awaitable[Translatable]:
-        """Translate object written in one language to another."""
-        ...
+U = TypeVar("U", bound=Translatable)
 
 
-# data classes
-@dataclass
-class DeepL:
-    """DeepL class for translating text."""
-
-    lang_from: Union[Language, str] = Language.AUTO  #: Language of original text.
-    lang_to: Union[Language, str] = Language.AUTO  #: Language for translated text.
-    timeout: int = TIMEOUT  #: Timeout for translation (in seconds).
-
-    def __post_init__(self) -> None:
-        if isinstance(self.lang_from, str):
-            self.lang_from = Language[self.lang_from.upper()]
-
-        if isinstance(self.lang_to, str):
-            self.lang_to = Language[self.lang_to.upper()]
-
-    @property
-    def base_url(self) -> str:
-        """Base URL of translation."""
-        return f"{DEEPL_URL}#/{self.lang_from.name}/{self.lang_to.name}"
-
-    async def translate(self, obj: Translatable) -> Awaitable[Translatable]:
-        """Translate object written in one language to another."""
-        if self.lang_from == self.lang_to:
-            return obj
-
-        text = str(obj)
-        url = f"{self.base_url}/{quote(text)}"
-        logger.debug(f"{url:.300}...")
-
-        async with async_playwright() as p:
-            browser = await p.chromium.launch()
-
-            page = await browser.new_page()
-            page.set_default_timeout(1e3 * self.timeout)
-
-            try:
-                await page.goto(url, wait_until="networkidle")
-                elem = await page.query_selector(SELECTOR)
-                translated = await elem.text_content()
-            except TimeoutError as err:
-                raise type(err)("Translation was timed out.")
-            finally:
-                await browser.close()
-
-        return obj.replace(text, translated.strip())
-
-
-# utility functions
 def translate(
-    obj: Translatable,
-    lang_to: Union[Language, str] = Language.AUTO,
-    lang_from: Union[Language, str] = Language.AUTO,
-    timeout: int = TIMEOUT,
-) -> Translatable:
-    """Translate object written in one language to another.
+    translatables: Iterable[U],
+    language_to: Language = Language.AUTO,
+    language_from: Language = Language.EN,
+    n_concurrent: int = N_CONCURRENT,
+    timeout: float = TIMEOUT,
+) -> List[U]:
+    """Translate objects written in one language to another.
 
     Args:
-        obj: Object whose text is to be translated.
-        lang_to: Language for translated text.
-        lang_from: Language of original text.
-        timeout: Timeout for translation (in seconds).
+        translatables: Translatable objects.
+        language_to: Language of the translated objects.
+        language_from: Language of the original objects.
+        n_concurrent: Number of concurrent translation.
+        timeout: Timeout for translation per object (in seconds).
 
     Returns:
-        Translated object.
+        Translated objects.
 
     """
-    deepl = DeepL(lang_from, lang_to, timeout)
-    return asyncio.run(deepl.translate(obj))
+    return run(
+        async_translate(
+            translatables,
+            language_to,
+            language_from,
+            n_concurrent,
+            timeout,
+        )
+    )
+
+
+async def async_translate(
+    translatables: Iterable[U],
+    language_to: Language = Language.AUTO,
+    language_from: Language = Language.EN,
+    n_concurrent: int = N_CONCURRENT,
+    timeout: float = TIMEOUT,
+) -> List[U]:
+    """Async version of the translate function."""
+    if language_from == language_to:
+        return list(translatables)
+
+    async with async_playwright() as playwright:
+        browser = await playwright.chromium.launch()
+        url = f"{DEEPL_URL}#/{language_from.name}/{language_to.name}"
+
+        async def _translate(translatable: U) -> U:
+            if not (original := str(translatable)):
+                return translatable
+
+            page = await browser.new_page()
+            page.set_default_timeout(1e3 * timeout)
+
+            try:
+                await page.goto(f"{url}/{quote(original)}")
+                translated = await until_available(page, DEEPL_SEL)
+                return translatable.replace(original, translated)
+            except TimeoutError:
+                return translatable
+            finally:
+                await page.close()
+
+        try:
+            return await async_map(_translate, translatables, n_concurrent)
+        finally:
+            await browser.close()
+
+
+async def until_available(page: Page, selector: str) -> str:
+    """Wait until the text content in a selector is available."""
+    while True:
+        await sleep(0.5)
+
+        if (content := await page.text_content(selector)) is None:
+            continue
+
+        if not (content := content.strip()):
+            continue
+
+        return content
+
+
+async def async_map(
+    coro_func: Callable[[S], Awaitable[T]],
+    iterables: Iterable[S],
+    n_concurrent: int,
+) -> List[T]:
+    """Async version of map function."""
+    sem = Semaphore(n_concurrent)
+
+    async def task(coro: Awaitable[T]) -> T:
+        async with sem:
+            return await coro
+
+    awaitables = [task(coro_func(elem)) for elem in iterables]
+    return list(await gather(*awaitables))
