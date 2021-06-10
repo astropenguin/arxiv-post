@@ -1,49 +1,57 @@
-from dataclasses import dataclass, field
 from datetime import timezone
-from typing import Generator, Sequence
+from typing import Generator, Optional, Sequence
 
-from arxiv import Search as _Search  # type: ignore
+from arxiv import Search  # type: ignore
 from dateparser import parse
 
 from .article import Article
+from .constants import START_DATE, END_DATE
 
 
-@dataclass
-class Search:
-    """Class for searching for articles in arXiv."""
+def search(
+    categories: Optional[Sequence[str]] = None,
+    keywords: Optional[Sequence[str]] = None,
+    start_date: str = START_DATE,
+    end_date: str = END_DATE,
+) -> Generator[Article, None, None]:
+    """Search for articles in arXiv.
 
-    categories: Sequence[str] = field(default_factory=list)
-    keywords: Sequence[str] = field(default_factory=list)
-    start_date: str = "3 days ago at midnight in UTC"
-    end_date: str = "2 days ago at midnight in UTC"
+    Args:
+        categories: arXiv categories.
+        keywords: Keywords of the search.
+        start_date: Start date of the search.
+        end_date: End date of the search.
 
-    def run(self) -> Generator[Article, None, None]:
-        for result in _Search(self.query).get():
-            yield Article.from_arxiv_result(result)
+    Yields:
+        Articles found with given conditions.
 
-    @property
-    def query(self) -> str:
-        start_date = format_date(self.start_date)
-        end_date = format_date(self.end_date)
+    """
+    if categories is None:
+        categories = []
 
-        query = f"submittedDate:[{start_date} TO {end_date}]"
+    if keywords is None:
+        keywords = []
 
-        if self.categories:
-            sub = " OR ".join(f"cat:{cat}" for cat in self.categories)
-            query += f" AND ({sub})"
+    start_date = format_date(start_date)
+    end_date = format_date(end_date)
 
-        if self.keywords:
-            sub = " OR ".join(f'abs:"{kwd}"' for kwd in self.keywords)
-            query += f" AND ({sub})"
+    query = f"submittedDate:[{start_date} TO {end_date}]"
 
-        return query
+    if categories:
+        sub = " OR ".join(f"cat:{cat}" for cat in categories)
+        query += f" AND ({sub})"
+
+    if keywords:
+        sub = " OR ".join(f'abs:"{kwd}"' for kwd in keywords)
+        query += f" AND ({sub})"
+
+    for result in Search(query).get():
+        yield Article.from_arxiv_result(result)
 
 
 def format_date(date_like: str) -> str:
-    """Parse and format (YYYYmmddHHMMSS) date-like string."""
-    dt = parse(date_like)
-
-    if dt is None:
+    """Parse and format a date-like string (YYYYmmddHHMMSS)."""
+    if (dt := parse(date_like)) is None:
         raise ValueError(f"Could not parse: {date_like}")
 
     return dt.astimezone(timezone.utc).strftime("%Y%m%d%H%M%S")
