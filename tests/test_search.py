@@ -1,17 +1,16 @@
-# third-party packages
+# dependencies
 from astro_ph.search import search
-from typing_extensions import Final
 
 
 # constants
-DATE_START: Final[str] = "2021-01-01"
-DATE_END: Final[str] = "2021-01-02"
-KEYWORDS: Final[tuple] = ("galaxy",)
-CATEGORIES: Final[tuple] = ("astro-ph.GA",)
-N_ARTICLES: Final[int] = 4
+CATEGORIES = ("astro-ph.GA",)
+KEYWORDS = ("galaxy",)
+START_DATE = "2021-01-01 in UTC"
+END_DATE = "2021-01-02 in UTC"
+N_ARTICLES = 4
 
 
 # test functions
 def test_search() -> None:
-    articles = search(DATE_START, DATE_END, KEYWORDS, CATEGORIES)
+    articles = list(search(CATEGORIES, KEYWORDS, START_DATE, END_DATE))
     assert len(articles) == N_ARTICLES
