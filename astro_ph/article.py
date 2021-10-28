@@ -3,7 +3,7 @@ from __future__ import annotations
 
 # standard library
 from dataclasses import dataclass, replace
-from typing import List
+from typing import List, Optional
 
 
 # dependencies
@@ -27,6 +27,7 @@ class Article:
     authors: List[str]  #: Author list of the article.
     summary: str  #: Summary (abstract) of the article.
     arxiv_url: str  #: arXiv URL of the article.
+    original: Optional[Article] = None  #: For translation.
 
     def __post_init__(self) -> None:
         self.title = detex(self.title)
@@ -47,7 +48,7 @@ class Article:
 
     def replace(self, original: str, translated: str) -> Article:
         title, summary = translated.split(TITLE_SUMMARY_DIV)
-        return replace(self, title=title, summary=summary)
+        return replace(self, title=title, summary=summary, original=self)
 
     def __str__(self) -> str:
         return f"{self.title}\n{TITLE_SUMMARY_DIV}\n{self.summary}"
