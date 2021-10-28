@@ -1,8 +1,13 @@
+from __future__ import annotations
+
+
+# standard library
 import re
 from dataclasses import dataclass
 from typing import Pattern, Union
 
 
+# constants
 @dataclass
 class ReplaceRule:
     """Class for replacing rules of texts."""
@@ -26,6 +31,7 @@ DETEX_RULES = [
 ]
 
 
+# runtime functions
 def detex(text: str) -> str:
     """Remove TeX's control commands from a text."""
     for rule in DETEX_RULES:
