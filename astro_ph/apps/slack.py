@@ -68,10 +68,10 @@ text = "View PDF"
 
 
 # runtime functions
-def post(articles: Sequence[Article], slack_webhook_url: str) -> None:
+def post(articles: Sequence[Article], webhook_url: str) -> None:
     """Post articles to Slack."""
     for article in articles:
-        _post(slack_webhook_url, json=to_payload(article))
+        _post(webhook_url, json=to_payload(article))
 
 
 def to_payload(article: Article) -> Dict[str, Any]:
