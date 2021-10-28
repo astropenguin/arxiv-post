@@ -2,12 +2,13 @@ __all__ = ["post"]
 
 
 # standard library
+from logging import getLogger
 from typing import Any, Dict, Sequence
 
 
 # dependencies
 from requests import post as _post
-from tomli import loads
+from tomli import TOMLDecodeError, loads
 
 
 # submodules
@@ -67,11 +68,19 @@ text = "View PDF"
 """
 
 
+# logger
+logger = getLogger(__name__)
+
+
 # runtime functions
 def post(articles: Sequence[Article], webhook_url: str) -> None:
     """Post articles to Slack."""
     for article in articles:
-        _post(webhook_url, json=to_payload(article))
+        try:
+            _post(webhook_url, json=to_payload(article))
+            logger.debug(f"Posted {article.arxiv_url}")
+        except TOMLDecodeError:
+            logger.warn(f"Failed to post {article.arxiv_url}")
 
 
 def to_payload(article: Article) -> Dict[str, Any]:
