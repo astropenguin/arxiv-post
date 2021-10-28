@@ -766,7 +766,7 @@ python-versions = ">=2.6, !=3.0.*, !=3.1.*, !=3.2.*"
 name = "tomli"
 version = "1.2.2"
 description = "A lil' TOML parser"
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=3.6"
 
@@ -846,7 +846,7 @@ python-versions = ">=3.7"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "3f7555d62f1baf1ea09d9259409a4e7ada68224a7b9692d3634bfd29720656aa"
+content-hash = "401313692bbbbb06ccc08f88bbbc10e07fa1bb683c990342c5778640f543cec5"
 
 [metadata.files]
 alabaster = [

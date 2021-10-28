@@ -16,6 +16,7 @@ dateparser = "^1.1"
 fire = "^0.4"
 playwright = "^1.16"
 requests = "^2.26"
+tomli = "^1.2"
 
 
 [tool.poetry.dev-dependencies]
