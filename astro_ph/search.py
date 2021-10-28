@@ -1,3 +1,6 @@
+__all__ = ["search"]
+
+
 # standard library
 from typing import Generator, Optional, Sequence
 

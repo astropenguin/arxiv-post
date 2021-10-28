@@ -1,3 +1,6 @@
+__all__ = ["Article"]
+
+
 # standard library
 from dataclasses import dataclass, replace
 from typing import List, Optional

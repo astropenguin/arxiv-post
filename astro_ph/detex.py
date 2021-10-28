@@ -1,3 +1,6 @@
+__all__ = ["detex"]
+
+
 # standard library
 import re
 from dataclasses import dataclass
