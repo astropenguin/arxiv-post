@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 # standard library
 from asyncio import Semaphore, gather, sleep, run
 from typing import Awaitable, Callable, Iterable, List, Protocol, TypeVar, Union

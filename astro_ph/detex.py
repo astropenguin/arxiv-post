@@ -1,6 +1,3 @@
-from __future__ import annotations
-
-
 # standard library
 import re
 from dataclasses import dataclass
