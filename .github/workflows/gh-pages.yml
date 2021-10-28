@@ -10,23 +10,24 @@ jobs:
   job:
     name: GitHub Pages
     runs-on: ubuntu-latest
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      POETRY_VIRTUALENVS_CREATE: false
     steps:
       - uses: actions/checkout@v2
       - name: Setup Python
         uses: actions/setup-python@v2
-        with:
-          python-version: 3.8
       - name: Install dependencies
         run: |
           sudo apt install pandoc
           pip install poetry
           poetry install
       - name: Build docs
-        run: poetry run scripts/docs
+        run: docs/build
       - name: Deploy docs
         uses: peaceiris/actions-gh-pages@v3
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: $GITHUB_TOKEN
           publish_dir: ./docs/_build
           publish_branch: gh-pages
           force_orphan: true

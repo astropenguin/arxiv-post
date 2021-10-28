@@ -3,22 +3,24 @@ name: Tests
 on:
   push:
     branches:
-      - master
+      - main
   pull_request:
     branches:
-      - master
+      - main
 
 jobs:
   job:
-    name: Test ${{ matrix.python-version }}
+    name: Test (Python ${{ matrix.python-version }})
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [3.7, 3.8, 3.9]
+        python-version: ["3.8", "3.9", "3.10"]
+    env:
+      POETRY_VIRTUALENVS_CREATE: false
+      TARGET_DIRS: astro_ph docs tests
     steps:
       - uses: actions/checkout@v2
-      - name: Setup Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v2
+      - uses: actions/setup-python@v2
         with:
           python-version: ${{ matrix.python-version }}
       - name: Install dependencies
@@ -26,12 +28,12 @@ jobs:
           sudo apt install pandoc
           pip install poetry
           poetry install
-          poetry run playwright install chromium
-      - name: Lint by Flake8
-        run: poetry run flake8 astro_ph docs tests
-      - name: Format by Black
-        run: poetry run black --check astro_ph docs tests
-      - name: Test by pytest
-        run : poetry run pytest -v tests
-      - name: Build docs
-        run: poetry run scripts/docs
+          playwright install chromium
+      - name: Test code's formatting (Black)
+        run: black --check ${TARGET_DIRS}
+      - name: Test code's style (Flake8)
+        run: flake8 ${TARGET_DIRS}
+      - name: Test code's execution (pytest)
+        run: pytest -v tests
+      - name: Test docs' build (Sphinx)
+        run: docs/build

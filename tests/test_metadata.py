@@ -1,11 +1,10 @@
-# third-party packages
+# dependencies
 import astro_ph
-from typing_extensions import Final
 
 
 # constants
-AUTHOR: Final[str] = "Akio Taniguchi"
-VERSION: Final[str] = "0.2.4"
+AUTHOR = "Akio Taniguchi"
+VERSION = "0.3.0"
 
 
 # test functions

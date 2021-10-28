@@ -24,7 +24,7 @@ In this case, you need to [create a custom Slack app to get an URL of incoming w
 ```shell
 $ astro-ph slack --keywords galaxy,galaxies \
                  --categories astro-ph.GA,astro-ph.IM \
-                 --lang_to ja \
+                 --language_to ja \
                  --webhook_url https://hooks.slack.com/services/***/***
 ```
 
