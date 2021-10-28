@@ -3,32 +3,32 @@ name = "astro-ph"
 version = "0.2.4"
 description = "Translate and post arXiv articles to various apps"
 authors = ["Akio Taniguchi <taniguchi@a.phys.nagoya-u.ac.jp>"]
+keywords = ["arxiv", "astro-ph", "translation"]
 license = "MIT"
 readme = "README.md"
 homepage = "https://github.com/astropenguin/astro-ph/"
 documentation = "https://astropenguin.github.io/astro-ph/"
 
 [tool.poetry.dependencies]
-python = "^3.7"
+python = "^3.8"
 aiohttp = "^3.7"
-arxiv = "^1.2"
-dateparser = "^1.0"
+arxiv = "^1.4"
+dateparser = "^1.1"
 fire = "^0.4"
-playwright = "^1.11"
-typing-extensions = "^3.10"
+playwright = "^1.16"
 
 
 [tool.poetry.dev-dependencies]
-black = "^21.5b"
-flake8 = "^3.9"
-ipython = "^7.24"
-pydata-sphinx-theme = "^0.4"
+black = "^21.9b"
+flake8 = "^4.0"
+ipython = "^7.28"
+pydata-sphinx-theme = "^0.7"
 pytest = "^6.2"
-sphinx = "^3.5"
+sphinx = "^4.2"
 
 [tool.poetry.scripts]
 astro-ph = 'astro_ph.cli:cli'
 
 [build-system]
-requires = ["poetry>=0.12"]
-build-backend = "poetry.masonry.api"
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
