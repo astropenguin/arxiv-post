@@ -1,6 +1,3 @@
-from __future__ import annotations
-
-
 # standard library
 from enum import auto, Enum
 
@@ -29,7 +26,7 @@ class Language(Enum):
     ZH = auto()  #: Chinese
 
     @classmethod
-    def from_str(cls, string: str) -> Language:
+    def from_str(cls, string: str) -> "Language":
         """Convert a string to a language."""
         return getattr(cls, string.upper())
 

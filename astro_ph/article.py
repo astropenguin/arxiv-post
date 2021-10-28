@@ -1,6 +1,3 @@
-from __future__ import annotations
-
-
 # standard library
 from dataclasses import dataclass, replace
 from typing import List, Optional
@@ -27,7 +24,7 @@ class Article:
     authors: List[str]  #: Author list of the article.
     summary: str  #: Summary (abstract) of the article.
     arxiv_url: str  #: arXiv URL of the article.
-    original: Optional[Article] = None  #: For translation.
+    original: Optional["Article"] = None  #: For translation.
 
     def __post_init__(self) -> None:
         self.title = detex(self.title)
@@ -38,7 +35,7 @@ class Article:
         return self.arxiv_url.replace("abs", "pdf")
 
     @classmethod
-    def from_arxiv_result(cls, result: Result) -> Article:
+    def from_arxiv_result(cls, result: Result) -> "Article":
         return Article(
             title=result.title,
             authors=[a.name for a in result.authors],  # type: ignore
@@ -46,7 +43,7 @@ class Article:
             arxiv_url=str(result),
         )
 
-    def replace(self, original: str, translated: str) -> Article:
+    def replace(self, original: str, translated: str) -> "Article":
         title, summary = translated.split(TITLE_SUMMARY_DIV)
         return replace(self, title=title, summary=summary, original=self)
 
