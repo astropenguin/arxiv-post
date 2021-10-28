@@ -1,22 +1,31 @@
 from __future__ import annotations
 
-from asyncio import gather, Semaphore, sleep, run
-from typing import Awaitable, Callable, Iterable, List, Protocol, TypeVar
+# standard library
+from asyncio import Semaphore, gather, sleep, run
+from typing import Awaitable, Callable, Iterable, List, Protocol, TypeVar, Union
 from urllib.parse import quote
 
-from playwright.async_api import async_playwright, Page, TimeoutError
 
-from .constants import Language, N_CONCURRENT, TIMEOUT
+# dependencies
+from playwright.async_api import Page, TimeoutError, async_playwright
 
 
+# submodules
+from .constants import N_CONCURRENT, TIMEOUT, Language
+
+
+# constants
 DEEPL_SEL = "#target-dummydiv"
 DEEPL_URL = "https://deepl.com/translator"
+
+
+# type hints
 S = TypeVar("S")
 T = TypeVar("T")
 
 
 class Translatable(Protocol):
-    """Protocol for translatable objects."""
+    """Type hint for translatable objects."""
 
     def replace(self: T, original: str, translated: str) -> T:
         ...
@@ -28,10 +37,11 @@ class Translatable(Protocol):
 U = TypeVar("U", bound=Translatable)
 
 
+# runtime functions
 def translate(
     translatables: Iterable[U],
-    language_to: Language = Language.AUTO,
-    language_from: Language = Language.EN,
+    language_to: Union[Language, str] = Language.AUTO,
+    language_from: Union[Language, str] = Language.EN,
     n_concurrent: int = N_CONCURRENT,
     timeout: float = TIMEOUT,
 ) -> List[U]:
@@ -48,6 +58,12 @@ def translate(
         Translated objects.
 
     """
+    if isinstance(language_to, str):
+        language_to = Language.from_str(language_to)
+
+    if isinstance(language_from, str):
+        language_from = Language.from_str(language_from)
+
     return run(
         async_translate(
             translatables,
@@ -72,9 +88,9 @@ async def async_translate(
 
     async with async_playwright() as playwright:
         browser = await playwright.chromium.launch()
-        url = f"{DEEPL_URL}#/{language_from.name}/{language_to.name}"
+        translator = f"{DEEPL_URL}#/{language_from}/{language_to}"
 
-        async def _translate(translatable: U) -> U:
+        async def run(translatable: U) -> U:
             if not (original := str(translatable)):
                 return translatable
 
@@ -82,7 +98,7 @@ async def async_translate(
             page.set_default_timeout(1e3 * timeout)
 
             try:
-                await page.goto(f"{url}/{quote(original)}")
+                await page.goto(f"{translator}/{quote(original)}")
                 translated = await until_available(page, DEEPL_SEL)
                 return translatable.replace(original, translated)
             except TimeoutError:
@@ -91,7 +107,7 @@ async def async_translate(
                 await page.close()
 
         try:
-            return await async_map(_translate, translatables, n_concurrent)
+            return await async_map(run, translatables, n_concurrent)
         finally:
             await browser.close()
 
