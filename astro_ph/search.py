@@ -1,13 +1,22 @@
-from datetime import timezone
+# standard library
 from typing import Generator, Optional, Sequence
 
+
+# dependencies
 from arxiv import Search  # type: ignore
 from dateparser import parse
 
+
+# submodules
 from .article import Article
 from .constants import START_DATE, END_DATE
 
 
+# constants
+ARXIV_DATE_FORMAT = "%Y%m%d%H%M%S"
+
+
+# runtime functions
 def search(
     categories: Optional[Sequence[str]] = None,
     keywords: Optional[Sequence[str]] = None,
@@ -45,13 +54,13 @@ def search(
         sub = " OR ".join(f'abs:"{kwd}"' for kwd in keywords)
         query += f" AND ({sub})"
 
-    for result in Search(query).get():
+    for result in Search(query).results():
         yield Article.from_arxiv_result(result)
 
 
 def format_date(date_like: str) -> str:
-    """Parse and format a date-like string (YYYYmmddHHMMSS)."""
-    if (dt := parse(date_like)) is None:
-        raise ValueError(f"Could not parse: {date_like}")
+    """Parse and format a date-like string."""
+    if (dt := parse(date_like)) is not None:
+        return dt.strftime(ARXIV_DATE_FORMAT)
 
-    return dt.astimezone(timezone.utc).strftime("%Y%m%d%H%M%S")
+    raise ValueError(f"Could not parse {date_like!r}.")
