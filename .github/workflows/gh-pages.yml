@@ -11,7 +11,6 @@ jobs:
     name: GitHub Pages
     runs-on: ubuntu-latest
     env:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       POETRY_VIRTUALENVS_CREATE: false
     steps:
       - uses: actions/checkout@v2
@@ -27,7 +26,7 @@ jobs:
       - name: Deploy docs
         uses: peaceiris/actions-gh-pages@v3
         with:
-          github_token: $GITHUB_TOKEN
+          github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./docs/_build
           publish_branch: gh-pages
           force_orphan: true

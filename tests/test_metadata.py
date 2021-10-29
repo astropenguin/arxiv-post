@@ -4,7 +4,7 @@ import astro_ph
 
 # constants
 AUTHOR = "Akio Taniguchi"
-VERSION = "0.3.0"
+VERSION = "0.3.1"
 
 
 # test functions
