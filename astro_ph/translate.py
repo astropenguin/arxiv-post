@@ -4,7 +4,6 @@ __all__ = ["translate"]
 # standard library
 from asyncio import Semaphore, gather, sleep, run
 from typing import Awaitable, Callable, Iterable, List, Protocol, TypeVar, Union
-from urllib.parse import quote
 
 
 # dependencies
@@ -16,8 +15,9 @@ from .constants import N_CONCURRENT, TIMEOUT, Language
 
 
 # constants
-DEEPL_SEL = "#target-dummydiv"
-DEEPL_URL = "https://deepl.com/translator"
+DEEPL_INPUT = "textarea.lmt__source_textarea"
+DEEPL_OUTPUT = "#target-dummydiv"
+DEEPL_TRANSLATOR = "https://deepl.com/translator"
 
 
 # type hints
@@ -89,7 +89,7 @@ async def async_translate(
 
     async with async_playwright() as playwright:
         browser = await playwright.chromium.launch()
-        translator = f"{DEEPL_URL}#/{language_from}/{language_to}"
+        url = f"{DEEPL_TRANSLATOR}#{language_from}/{language_to}/"
 
         async def run(translatable: U) -> U:
             if not (original := str(translatable)):
@@ -99,8 +99,9 @@ async def async_translate(
             page.set_default_timeout(1e3 * timeout)
 
             try:
-                await page.goto(f"{translator}/{quote(original)}")
-                translated = await until_available(page, DEEPL_SEL)
+                await page.goto(url)
+                await page.fill(DEEPL_INPUT, original)
+                translated = await until_filled(page, DEEPL_OUTPUT)
                 return translatable.replace(original, translated)
             except TimeoutError:
                 return translatable
@@ -113,8 +114,8 @@ async def async_translate(
             await browser.close()
 
 
-async def until_available(page: Page, selector: str) -> str:
-    """Wait until the text content in a selector is available."""
+async def until_filled(page: Page, selector: str) -> str:
+    """Wait until the text content in a selector is filled."""
     while True:
         await sleep(0.5)
 
