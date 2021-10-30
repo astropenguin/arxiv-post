@@ -15,14 +15,7 @@ from .search import search
 
 
 # constants
-CATEGORIES = [
-    "astro-ph.CO",
-    "astro-ph.EP",
-    "astro-ph.GA",
-    "astro-ph.HE",
-    "astro-ph.IM",
-    "astro-ph.SR",
-]
+CATEGORIES = ["astro-ph.*"]
 KEYWORDS = []
 LANGUAGE_FROM = "en"
 LANGUAGE_TO = "auto"
