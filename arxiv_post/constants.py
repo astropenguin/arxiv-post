@@ -1,4 +1,14 @@
-__all__ = ["START_DATE", "END_DATE", "N_CONCURRENT", "TIMEOUT", "Language"]
+__all__ = [
+    "CATEGORIES",
+    "KEYWORDS",
+    "START_DATE",
+    "END_DATE",
+    "LANGUAGE_FROM",
+    "LANGUAGE_TO",
+    "N_CONCURRENT",
+    "TIMEOUT",
+    "Language",
+]
 
 
 # standard library
@@ -6,8 +16,12 @@ from enum import auto, Enum
 
 
 # constants
+CATEGORIES = ("astro-ph.*",)
+KEYWORDS = ()
 START_DATE = "3 days ago at midnight in UTC"
 END_DATE = "2 days ago at midnight in UTC"
+LANGUAGE_FROM = "en"
+LANGUAGE_TO = "auto"
 N_CONCURRENT = 10
 TIMEOUT = 30.0
 

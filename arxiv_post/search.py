@@ -2,7 +2,7 @@ __all__ = ["search"]
 
 
 # standard library
-from typing import Generator, Optional, Sequence
+from typing import Generator, Sequence
 
 
 # dependencies
@@ -12,7 +12,7 @@ from dateparser import parse
 
 # submodules
 from .article import Article
-from .constants import START_DATE, END_DATE
+from .constants import CATEGORIES, KEYWORDS, START_DATE, END_DATE
 
 
 # constants
@@ -21,8 +21,8 @@ ARXIV_DATE_FORMAT = "%Y%m%d%H%M%S"
 
 # runtime functions
 def search(
-    categories: Optional[Sequence[str]] = None,
-    keywords: Optional[Sequence[str]] = None,
+    categories: Sequence[str] = CATEGORIES,
+    keywords: Sequence[str] = KEYWORDS,
     start_date: str = START_DATE,
     end_date: str = END_DATE,
 ) -> Generator[Article, None, None]:
@@ -38,12 +38,6 @@ def search(
         Articles found with given conditions.
 
     """
-    if categories is None:
-        categories = []
-
-    if keywords is None:
-        keywords = []
-
     start_date = format_date(start_date)
     end_date = format_date(end_date)
 

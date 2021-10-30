@@ -11,7 +11,7 @@ from playwright.async_api import Page, TimeoutError, async_playwright
 
 
 # submodules
-from .constants import N_CONCURRENT, TIMEOUT, Language
+from .constants import LANGUAGE_FROM, LANGUAGE_TO, N_CONCURRENT, TIMEOUT, Language
 
 
 # constants
@@ -41,8 +41,8 @@ U = TypeVar("U", bound=Translatable)
 # runtime functions
 def translate(
     translatables: Iterable[U],
-    language_to: Union[Language, str] = Language.AUTO,
-    language_from: Union[Language, str] = Language.EN,
+    language_to: Union[Language, str] = LANGUAGE_TO,
+    language_from: Union[Language, str] = LANGUAGE_FROM,
     n_concurrent: int = N_CONCURRENT,
     timeout: float = TIMEOUT,
 ) -> List[U]:
@@ -78,10 +78,10 @@ def translate(
 
 async def async_translate(
     translatables: Iterable[U],
-    language_to: Language = Language.AUTO,
-    language_from: Language = Language.EN,
-    n_concurrent: int = N_CONCURRENT,
-    timeout: float = TIMEOUT,
+    language_to: Language,
+    language_from: Language,
+    n_concurrent: int,
+    timeout: float,
 ) -> List[U]:
     """Async version of the translate function."""
     if language_from == language_to:

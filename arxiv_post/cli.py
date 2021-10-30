@@ -9,16 +9,18 @@ from fire import Fire  # type: ignore
 
 # submodules
 from .apps import slack
-from .constants import START_DATE, END_DATE, N_CONCURRENT, TIMEOUT
+from .constants import (
+    CATEGORIES,
+    KEYWORDS,
+    START_DATE,
+    END_DATE,
+    LANGUAGE_FROM,
+    LANGUAGE_TO,
+    N_CONCURRENT,
+    TIMEOUT,
+)
 from .translate import translate
 from .search import search
-
-
-# constants
-CATEGORIES = ["astro-ph.*"]
-KEYWORDS = []
-LANGUAGE_FROM = "en"
-LANGUAGE_TO = "auto"
 
 
 # logger
