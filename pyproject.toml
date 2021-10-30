@@ -1,13 +1,13 @@
 [tool.poetry]
-name = "astro-ph"
+name = "arxiv-post"
 version = "0.3.1"
 description = "Translate and post arXiv articles to various apps"
 authors = ["Akio Taniguchi <taniguchi@a.phys.nagoya-u.ac.jp>"]
-keywords = ["arxiv", "astro-ph", "translation"]
+keywords = ["arxiv", "slack", "translation"]
 license = "MIT"
 readme = "README.md"
-homepage = "https://github.com/astropenguin/astro-ph/"
-documentation = "https://astropenguin.github.io/astro-ph/"
+homepage = "https://github.com/astropenguin/arxiv-post/"
+documentation = "https://astropenguin.github.io/arxiv-post/"
 
 [tool.poetry.dependencies]
 python = "^3.8"
@@ -28,7 +28,7 @@ pytest = "^6.2"
 sphinx = "^4.2"
 
 [tool.poetry.scripts]
-astro-ph = 'astro_ph.cli:cli'
+arxiv-post = "arxiv_post.cli:cli"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

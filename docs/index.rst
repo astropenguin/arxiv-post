@@ -4,4 +4,4 @@
    :hidden:
 
    Home <self>
-   Package guide <_apidoc/astro_ph>
+   Package guide <_apidoc/arxiv_post>

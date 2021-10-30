@@ -17,7 +17,7 @@ jobs:
         python-version: ["3.8", "3.9", "3.10"]
     env:
       POETRY_VIRTUALENVS_CREATE: false
-      TARGET_DIRS: astro_ph docs tests
+      TARGET_DIRS: arxiv_post docs tests
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2

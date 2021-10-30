@@ -1,5 +1,5 @@
 # dependencies
-from astro_ph.search import search
+from arxiv_post.search import search
 
 
 # constants

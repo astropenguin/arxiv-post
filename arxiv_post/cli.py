@@ -15,14 +15,7 @@ from .search import search
 
 
 # constants
-CATEGORIES = [
-    "astro-ph.CO",
-    "astro-ph.EP",
-    "astro-ph.GA",
-    "astro-ph.HE",
-    "astro-ph.IM",
-    "astro-ph.SR",
-]
+CATEGORIES = ["astro-ph.*"]
 KEYWORDS = []
 LANGUAGE_FROM = "en"
 LANGUAGE_TO = "auto"
@@ -36,7 +29,7 @@ logger = getLogger(__name__)
 def configure_logging(debug: bool = False) -> None:
     """Configure logging format and level for CLI."""
     if debug:
-        getLogger("astro_ph").setLevel(DEBUG)
+        getLogger("arxiv_post").setLevel(DEBUG)
 
     basicConfig(
         datefmt="%Y-%m-%d %H:%M:%S",
