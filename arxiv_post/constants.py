@@ -16,16 +16,29 @@ class Language(Enum):
     """Available languages in the package."""
 
     AUTO = auto()  #: Auto language detection
+    BG = auto()  #: Bulgarian
+    CS = auto()  #: Czech
+    DA = auto()  #: Danish
     DE = auto()  #: German
+    EL = auto()  #: Greek
     EN = auto()  #: English
+    ES = auto()  #: Spanish
+    ET = auto()  #: Estonian
+    FI = auto()  #: Finnish
     FR = auto()  #: French
+    HU = auto()  #: Hungarian
     IT = auto()  #: Italian
     JA = auto()  #: Japanese
-    ES = auto()  #: Spanish
+    LT = auto()  #: Lithuanian
+    LV = auto()  #: Latvian
     NL = auto()  #: Dutch
     PL = auto()  #: Polish
     PT = auto()  #: Portuguese
+    RO = auto()  #: Romanian
     RU = auto()  #: Russian
+    SK = auto()  #: Slovak
+    SL = auto()  #: Slovenian
+    SV = auto()  #: Swedish
     ZH = auto()  #: Chinese
 
     @classmethod
