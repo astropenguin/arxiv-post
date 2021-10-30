@@ -1,5 +1,5 @@
 # dependencies
-from astro_ph.detex import detex
+from arxiv_post.detex import detex
 from pytest import mark
 
 

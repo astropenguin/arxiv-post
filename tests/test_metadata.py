@@ -1,5 +1,5 @@
 # dependencies
-import astro_ph
+import arxiv_post
 
 
 # constants
@@ -9,8 +9,8 @@ VERSION = "0.3.1"
 
 # test functions
 def test_author() -> None:
-    assert astro_ph.__author__ == AUTHOR
+    assert arxiv_post.__author__ == AUTHOR
 
 
 def test_version() -> None:
-    assert astro_ph.__version__ == VERSION
+    assert arxiv_post.__version__ == VERSION

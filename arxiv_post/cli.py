@@ -36,7 +36,7 @@ logger = getLogger(__name__)
 def configure_logging(debug: bool = False) -> None:
     """Configure logging format and level for CLI."""
     if debug:
-        getLogger("astro_ph").setLevel(DEBUG)
+        getLogger("arxiv_post").setLevel(DEBUG)
 
     basicConfig(
         datefmt="%Y-%m-%d %H:%M:%S",

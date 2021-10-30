@@ -1,5 +1,5 @@
 # dependencies
-from astro_ph.translate import Language, translate
+from arxiv_post.translate import Language, translate
 
 
 # constants
