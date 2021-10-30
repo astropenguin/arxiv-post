@@ -89,13 +89,14 @@ async def async_translate(
 
     async with async_playwright() as playwright:
         browser = await playwright.chromium.launch()
+        context = await browser.new_context()
         url = f"{DEEPL_TRANSLATOR}#{language_from}/{language_to}/"
 
         async def run(translatable: U) -> U:
             if not (original := str(translatable)):
                 return translatable
 
-            page = await browser.new_page()
+            page = await context.new_page()
             page.set_default_timeout(1e3 * timeout)
 
             try:
