@@ -101,7 +101,7 @@ async def async_translate(
             try:
                 await page.goto(url)
                 await page.fill(DEEPL_INPUT, original)
-                translated = await until_filled(page, DEEPL_OUTPUT)
+                translated = await get_text(page, DEEPL_OUTPUT, timeout)
                 return translatable.replace(original, translated)
             except TimeoutError:
                 return translatable
@@ -114,18 +114,16 @@ async def async_translate(
             await browser.close()
 
 
-async def until_filled(page: Page, selector: str) -> str:
-    """Wait until the text content in a selector is filled."""
-    while True:
+async def get_text(page: Page, selector: str, timeout: float) -> str:
+    """Get the nonempty text content in a selector of a page."""
+    for _ in range(int(timeout / 0.5)):
+        if (content := await page.text_content(selector)) is not None:
+            if content := content.strip():
+                return content
+
         await sleep(0.5)
 
-        if (content := await page.text_content(selector)) is None:
-            continue
-
-        if not (content := content.strip()):
-            continue
-
-        return content
+    raise TimeoutError("Nonempty text content did not appear.")
 
 
 async def async_map(
