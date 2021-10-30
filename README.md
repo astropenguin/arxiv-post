@@ -9,8 +9,6 @@ Translate and post arXiv articles to various apps
 
 ## Installation
 
-Use pip or other package manager to install the Python package.
-
 ```shell
 $ pip install arxiv-post
 ```
@@ -19,13 +17,13 @@ $ pip install arxiv-post
 
 After installation, command line interface, `arxiv-post`, is available, with which you can translate and post arXiv articles to various apps.
 Note that only `slack` app is currently available.
-In this case, you need to [create a custom Slack app to get an URL of incoming webhook](https://slack.com/help/articles/115005265063-Incoming-webhooks-for-Slack).
+You need to [create a custom Slack app to get an URL of incoming webhook](https://slack.com/help/articles/115005265063-Incoming-webhooks-for-Slack).
 
 ```shell
-$ arxiv-post slack --keywords galaxy,galaxies \
-                 --categories astro-ph.GA,astro-ph.IM \
-                 --language_to ja \
-                 --webhook_url https://hooks.slack.com/services/***/***
+$ arxiv-post slack --keywords deshima \
+                   --categories astro-ph.IM \
+                   --language_to ja \
+                   --webhook_url <Slack webhook URL>
 ```
 
 The posted article looks like this.
@@ -47,13 +45,5 @@ Here is a live example in which daily (2 days ago) arXiv articles in [astro-ph.G
 
 ## References
 
-- [fkubota/Carrier-Owl: arxiv--> DeepL --> Slack](https://github.com/fkubota/Carrier-Owl)
-    - The arxiv-post package is highly inspired by their work
-- [a-lab-nagoya/astro-ph-slack: Translate and post arXiv articles to Slack](https://github.com/a-lab-nagoya/astro-ph-slack)
-    - A live example using the arxiv-post package
-- [pyppeteer/pyppeteer: Headless chrome/chromium automation library (unofficial port of puppeteer)](https://github.com/pyppeteer/pyppeteer)
-    - Used for async Chromium operation
-- [aio-libs/aiohttp: Asynchronous HTTP client/server framework for asyncio and Python](https://github.com/aio-libs/aiohttp)
-    - Used for async article posts to Slack
-- [google/python-fire: Python Fire is a library for automatically generating command line interfaces (CLIs) from absolutely any Python object.](https://github.com/google/python-fire)
-    - Used for creating command line interface
+- [fkubota/Carrier-Owl: arxiv--> DeepL --> Slack](https://github.com/fkubota/Carrier-Owl): The arxiv-post package is highly inspired by their work.
+- [a-lab-nagoya/astro-ph-slack: Translate and post arXiv articles to Slack](https://github.com/a-lab-nagoya/astro-ph-slack): A live example using the arxiv-post package.
