@@ -4,7 +4,7 @@ import arxiv_post
 
 # constants
 AUTHOR = "Akio Taniguchi"
-VERSION = "0.3.1"
+VERSION = "0.4.0"
 
 
 # test functions
