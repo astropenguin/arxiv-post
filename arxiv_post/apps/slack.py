@@ -17,6 +17,8 @@ from ..article import Article
 
 # constants
 PAYLOAD_TOML = """
+text = "{header}"
+
 [[blocks]]
 type = "header"
 
