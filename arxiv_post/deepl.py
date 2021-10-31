@@ -5,11 +5,11 @@ __all__ = ["translate"]
 from asyncio import gather, sleep, run
 from logging import getLogger
 from textwrap import shorten
-from typing import Iterable, List, Protocol, TypeVar
+from typing import Iterable, List, Literal, Sequence, Protocol, TypeVar, cast
 
 
 # dependencies
-from deepl import Language
+from deepl import AuthorizationException, Language, TextResult, Translator
 from more_itertools import divide, flatten
 from playwright.async_api import Page, async_playwright
 
@@ -54,7 +54,7 @@ TL = TypeVar("TL", bound=Translatable)
 
 # runtime functions
 def translate(
-    translatables: Iterable[TL],
+    translatables: Sequence[TL],
     target_lang: str = TARGET_LANG,
     source_lang: str = SOURCE_LANG,
     deepl_mode: DeepLMode = DEEPL_MODE,
@@ -83,15 +83,15 @@ def translate(
     if source_lang == target_lang:
         return list(translatables)
 
-    return run(
-        async_translate(
-            translatables,
-            target_lang,
-            source_lang,
-            n_concurrent,
-            timeout,
-        )
-    )
+    if deepl_mode == "auto":
+        deepl_mode = choose_deepl_mode(translatables, deepl_api_key)
+
+    if deepl_mode == "api":
+        return translate_by_api(**locals())
+    elif deepl_mode == "browser":
+        return translate_by_browser(**locals())
+    else:
+        raise ValueError(f"{deepl_mode!r} is not supported.")
 
 
 def parse_language(lang: str) -> str:
@@ -105,41 +105,91 @@ def parse_language(lang: str) -> str:
         raise ValueError(f"{lang!r} is not supported.")
 
 
-async def async_translate(
-    translatables: Iterable[TL],
-    target_lang: str,
-    source_lang: str,
-    n_concurrent: int,
-    timeout: float,
+def choose_deepl_mode(
+    translatables: Sequence[TL],
+    deepl_api_key: str,
+) -> Literal["api", "browser"]:
+    """Choose translation mode of DeepL."""
+    if not deepl_api_key:
+        return "browser"
+
+    try:
+        deepl = Translator(deepl_api_key)
+        usage = deepl.get_usage().character
+    except AuthorizationException:
+        return "browser"
+
+    if not (usage.count is None or usage.limit is None):
+        total = sum(len(str(tl)) for tl in translatables)
+
+        if usage.limit - usage.count < total:
+            return "browser"
+
+    return "api"
+
+
+def translate_by_api(
+    translatables: Sequence[TL],
+    target_lang: str = TARGET_LANG,
+    source_lang: str = SOURCE_LANG,
+    deepl_api_key: str = "",
+    **_,
 ) -> List[TL]:
-    """Async version of the translate function."""
-    if source_lang == target_lang:
-        return list(translatables)
+    """Translate objects by the DeepL API."""
+    deepl = Translator(deepl_api_key)
 
-    async with async_playwright() as playwright:
-        browser = await playwright.chromium.launch()
-        context = await browser.new_context()
-        context.set_default_timeout(1e3 * timeout)
+    sources = list(map(str, translatables))
+    results = deepl.translate_text(
+        sources,
+        target_lang=target_lang,
+        source_lang=source_lang,
+    )
 
-        async def div_translate(tls: Iterable[TL]) -> List[TL]:
-            page = await context.new_page()
-            url = f"{DEEPL_TRANSLATOR}#{source_lang}/{target_lang}/"
+    results = cast(List[TextResult], results)
+    zipped = zip(translatables, sources, results)
+    return [tl.replace(src, res.text) for tl, src, res in zipped]
+
+
+def translate_by_browser(
+    translatables: Sequence[TL],
+    target_lang: str = TARGET_LANG,
+    source_lang: str = SOURCE_LANG,
+    n_concurrent: int = N_CONCURRENT,
+    timeout: float = TIMEOUT,
+    **_,
+) -> List[TL]:
+    """Translate objects by the DeepL web translator."""
+    url = f"{DEEPL_TRANSLATOR}#{source_lang}/{target_lang}/"
+
+    async def main() -> List[TL]:
+        async with async_playwright() as playwright:
+            browser = await playwright.chromium.launch()
+            context = await browser.new_context()
+            context.set_default_timeout(1e3 * timeout)
+
+            async def inner(translatables: Iterable[TL]) -> List[TL]:
+                page = await context.new_page()
+
+                try:
+                    await page.goto(url)
+                    return [
+                        await _translate(translatable, page, timeout)
+                        for translatable in translatables
+                    ]
+                finally:
+                    await page.close()
 
             try:
-                await page.goto(url)
-                return [await _translate(tl, page, timeout) for tl in tls]
+                coros = map(inner, divide(n_concurrent, translatables))
+                return list(flatten(await gather(*coros)))
             finally:
-                await page.close()
+                await browser.close()
 
-        try:
-            coros = map(div_translate, divide(n_concurrent, translatables))
-            return list(flatten(await gather(*coros)))
-        finally:
-            await browser.close()
+    return run(main())
 
 
 async def _translate(translatable: TL, page: Page, timeout: float) -> TL:
-    """Translate an object by a translator page."""
+    """Translate an object in a page of a browser."""
     if not (original := str(translatable)):
         return translatable
 
