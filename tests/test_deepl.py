@@ -1,5 +1,5 @@
 # dependencies
-from arxiv_post.translate import Language, translate
+from arxiv_post.deepl import Language, translate
 
 
 # constants

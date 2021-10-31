@@ -19,8 +19,8 @@ from .constants import (
     N_CONCURRENT,
     TIMEOUT,
 )
+from .deepl import translate
 from .search import search
-from .translate import translate
 
 
 # logger

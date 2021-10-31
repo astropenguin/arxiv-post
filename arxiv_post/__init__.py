@@ -8,5 +8,5 @@ from . import apps
 from . import article
 from . import cli
 from . import constants
+from . import deepl
 from . import search
-from . import translate
