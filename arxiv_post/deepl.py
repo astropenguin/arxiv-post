@@ -68,10 +68,10 @@ def translate(
         translatables: Translatable objects.
         target_lang: Language of the translated objects.
         source_lang: Language of the original objects.
-        deepl_mode: Translation mode of DeepL.
-        deepl_api_key: Authentication Key for DeepL API.
-        n_concurrent: Number of concurrent translation.
-        timeout: Timeout for translation per object (in seconds).
+        deepl_mode: Translation mode (auto, api, browser) of DeepL.
+        deepl_api_key: Authentication Key for DeepL API (api-mode only).
+        n_concurrent: Number of concurrent translation (browser-mode only).
+        timeout: Timeout for translation in seconds (browser-mode only).
 
     Returns:
         Translated objects.

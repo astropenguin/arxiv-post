@@ -68,10 +68,10 @@ def cmd_slack(
         end_date: End date for a search (exclusive).
         source_lang: Language of original text in articles.
         target_lang: Language of translated text in articles.
-        deepl_mode: Translation mode of DeepL.
-        deepl_api_key: Authentication Key for DeepL API.
-        n_concurrent: Number of simultaneous execution.
-        timeout: Timeout for each post execution (in seconds).
+        deepl_mode: Translation mode (auto, api, browser) of DeepL.
+        deepl_api_key: Authentication Key for DeepL API (api-mode only).
+        n_concurrent: Number of concurrent translation (browser-mode only).
+        timeout: Timeout for translation in seconds (browser-mode only).
         slack_webhook_url: URL of Slack incoming webhook.
         dry_run: If True, articles are not posted to Slack.
         debug: If True, debug-level log messages are shown.
