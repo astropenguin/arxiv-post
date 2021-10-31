@@ -2,12 +2,13 @@ __all__ = ["translate"]
 
 
 # standard library
-from asyncio import Semaphore, gather, sleep, run
-from typing import Awaitable, Callable, Iterable, List, Protocol, TypeVar, Union
+from asyncio import gather, sleep, run
+from typing import Iterable, List, Protocol, TypeVar, Union
 
 
 # dependencies
-from playwright.async_api import Page, TimeoutError, async_playwright
+from more_itertools import divide, flatten
+from playwright.async_api import Page, async_playwright
 
 
 # submodules
@@ -90,54 +91,42 @@ async def async_translate(
     async with async_playwright() as playwright:
         browser = await playwright.chromium.launch()
         context = await browser.new_context()
-        url = f"{DEEPL_TRANSLATOR}#{language_from}/{language_to}/"
+        context.set_default_timeout(1e3 * timeout)
 
-        async def run(translatable: U) -> U:
-            if not (original := str(translatable)):
-                return translatable
-
+        async def div_translate(trs: Iterable[U]) -> List[U]:
             page = await context.new_page()
-            page.set_default_timeout(1e3 * timeout)
+            url = f"{DEEPL_TRANSLATOR}#{language_from}/{language_to}/"
 
             try:
                 await page.goto(url)
-                await page.fill(DEEPL_INPUT, original)
-                translated = await get_text(page, DEEPL_OUTPUT, timeout)
-                return translatable.replace(original, translated)
-            except TimeoutError:
-                return translatable
+                return [await _translate(tr, page, timeout) for tr in trs]
             finally:
                 await page.close()
 
         try:
-            return await async_map(run, translatables, n_concurrent)
+            coros = map(div_translate, divide(n_concurrent, translatables))
+            return list(flatten(await gather(*coros)))
         finally:
             await browser.close()
 
 
-async def get_text(page: Page, selector: str, timeout: float) -> str:
-    """Get the nonempty text content in a selector of a page."""
-    for _ in range(int(timeout / 0.5)):
-        if (content := await page.text_content(selector)) is not None:
-            if content := content.strip():
-                return content
+async def _translate(translatable: U, page: Page, timeout: float) -> U:
+    """Translate an object by a translator page."""
+    if not (original := str(translatable)):
+        return translatable
 
+    await page.fill(DEEPL_INPUT, "")
+    await page.fill(DEEPL_INPUT, original)
+
+    for _ in range(int(timeout / 0.5)):
         await sleep(0.5)
 
-    raise TimeoutError("Nonempty text content did not appear.")
+        if (content := await page.text_content(DEEPL_OUTPUT)) is None:
+            continue
 
+        if not (content := content.strip()):
+            continue
 
-async def async_map(
-    coro_func: Callable[[S], Awaitable[T]],
-    iterables: Iterable[S],
-    n_concurrent: int,
-) -> List[T]:
-    """Async version of map function."""
-    sem = Semaphore(n_concurrent)
+        return translatable.replace(original, content)
 
-    async def task(coro: Awaitable[T]) -> T:
-        async with sem:
-            return await coro
-
-    awaitables = [task(coro_func(elem)) for elem in iterables]
-    return list(await gather(*awaitables))
+    return translatable
