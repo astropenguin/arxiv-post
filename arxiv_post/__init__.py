@@ -1,5 +1,4 @@
 # flake8: noqa
-# type: ignore
 __author__ = "Akio Taniguchi"
 __version__ = "0.4.0"
 

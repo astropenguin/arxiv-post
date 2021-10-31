@@ -4,7 +4,7 @@ from typing import Sequence
 
 
 # dependencies
-from fire import Fire  # type: ignore
+from fire import Fire
 
 
 # submodules

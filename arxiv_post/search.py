@@ -7,7 +7,7 @@ from typing import Generator, Sequence
 
 
 # dependencies
-from arxiv import Search  # type: ignore
+from arxiv import Search
 from dateparser import parse
 
 
