@@ -15,7 +15,14 @@ from playwright.async_api import Page, async_playwright
 
 
 # submodules
-from .consts import SOURCE_LANG, TARGET_LANG, N_CONCURRENT, TIMEOUT
+from .consts import (
+    SOURCE_LANG,
+    TARGET_LANG,
+    DEEPL_MODE,
+    N_CONCURRENT,
+    TIMEOUT,
+    DeepLMode,
+)
 
 
 # constants
@@ -92,6 +99,7 @@ def translate(
     translatables: Iterable[TL],
     target_lang: Union[Language, str] = TARGET_LANG,
     source_lang: Union[Language, str] = SOURCE_LANG,
+    deepl_mode: DeepLMode = DEEPL_MODE,
     n_concurrent: int = N_CONCURRENT,
     timeout: float = TIMEOUT,
 ) -> List[TL]:
@@ -101,6 +109,7 @@ def translate(
         translatables: Translatable objects.
         target_lang: Language of the translated objects.
         source_lang: Language of the original objects.
+        deepl_mode: Translation mode of DeepL.
         n_concurrent: Number of concurrent translation.
         timeout: Timeout for translation per object (in seconds).
 

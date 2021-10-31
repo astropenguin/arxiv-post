@@ -5,9 +5,15 @@ __all__ = [
     "END_DATE",
     "SOURCE_LANG",
     "TARGET_LANG",
+    "DEEPL_MODE",
     "N_CONCURRENT",
     "TIMEOUT",
+    "DeepLMode",
 ]
+
+
+# standard library
+from typing import Literal
 
 
 # constants
@@ -17,5 +23,10 @@ START_DATE = "3 days ago at midnight in UTC"
 END_DATE = "2 days ago at midnight in UTC"
 SOURCE_LANG = "en"
 TARGET_LANG = "en"
+DEEPL_MODE = "auto"
 N_CONCURRENT = 5
 TIMEOUT = 30.0
+
+
+# type hints
+DeepLMode = Literal["auto", "api", "browser"]
