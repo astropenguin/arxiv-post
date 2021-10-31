@@ -75,14 +75,18 @@ logger = getLogger(__name__)
 
 
 # runtime functions
-def post(articles: Sequence[Article], webhook_url: str) -> None:
+def post(articles: Sequence[Article], webhook_url: str, dry_run: bool) -> None:
     """Post articles to Slack."""
     for article in articles:
         try:
-            _post(webhook_url, json=to_payload(article))
-            logger.debug(f"Posted {article.arxiv_url}")
+            payload = to_payload(article)
+
+            if not dry_run:
+                _post(webhook_url, json=payload)
+
+            logger.debug(f"Posted an article ({article.arxiv_url})")
         except TOMLDecodeError:
-            logger.warn(f"Failed to post {article.arxiv_url}")
+            logger.warn(f"Failed to post an article ({article.arxiv_url})")
 
 
 def to_payload(article: Article) -> Dict[str, Any]:
