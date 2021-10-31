@@ -15,7 +15,7 @@ from playwright.async_api import Page, async_playwright
 
 
 # submodules
-from .consts import LANGUAGE_FROM, LANGUAGE_TO, N_CONCURRENT, TIMEOUT
+from .consts import SOURCE_LANG, TARGET_LANG, N_CONCURRENT, TIMEOUT
 
 
 # constants
@@ -90,8 +90,8 @@ TL = TypeVar("TL", bound=Translatable)
 # runtime functions
 def translate(
     translatables: Iterable[TL],
-    language_to: Union[Language, str] = LANGUAGE_TO,
-    language_from: Union[Language, str] = LANGUAGE_FROM,
+    target_lang: Union[Language, str] = TARGET_LANG,
+    source_lang: Union[Language, str] = SOURCE_LANG,
     n_concurrent: int = N_CONCURRENT,
     timeout: float = TIMEOUT,
 ) -> List[TL]:
@@ -99,8 +99,8 @@ def translate(
 
     Args:
         translatables: Translatable objects.
-        language_to: Language of the translated objects.
-        language_from: Language of the original objects.
+        target_lang: Language of the translated objects.
+        source_lang: Language of the original objects.
         n_concurrent: Number of concurrent translation.
         timeout: Timeout for translation per object (in seconds).
 
@@ -111,8 +111,8 @@ def translate(
     return run(
         async_translate(
             translatables,
-            language_to,
-            language_from,
+            target_lang,
+            source_lang,
             n_concurrent,
             timeout,
         )
@@ -121,19 +121,19 @@ def translate(
 
 async def async_translate(
     translatables: Iterable[TL],
-    language_to: Union[Language, str],
-    language_from: Union[Language, str],
+    target_lang: Union[Language, str],
+    source_lang: Union[Language, str],
     n_concurrent: int,
     timeout: float,
 ) -> List[TL]:
     """Async version of the translate function."""
-    if isinstance(language_to, str):
-        language_to = Language.from_str(language_to)
+    if isinstance(target_lang, str):
+        target_lang = Language.from_str(target_lang)
 
-    if isinstance(language_from, str):
-        language_from = Language.from_str(language_from)
+    if isinstance(source_lang, str):
+        source_lang = Language.from_str(source_lang)
 
-    if language_from == language_to:
+    if source_lang == target_lang:
         return list(translatables)
 
     async with async_playwright() as playwright:
@@ -143,7 +143,7 @@ async def async_translate(
 
         async def div_translate(tls: Iterable[TL]) -> List[TL]:
             page = await context.new_page()
-            url = f"{DEEPL_TRANSLATOR}#{language_from}/{language_to}/"
+            url = f"{DEEPL_TRANSLATOR}#{source_lang}/{target_lang}/"
 
             try:
                 await page.goto(url)

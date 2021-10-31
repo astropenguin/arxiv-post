@@ -15,8 +15,8 @@ from .consts import (
     KEYWORDS,
     START_DATE,
     END_DATE,
-    LANGUAGE_FROM,
-    LANGUAGE_TO,
+    SOURCE_LANG,
+    TARGET_LANG,
     N_CONCURRENT,
     TIMEOUT,
 )
@@ -44,8 +44,8 @@ def cmd_slack(
     keywords: Sequence[str] = KEYWORDS,
     start_date: str = START_DATE,
     end_date: str = END_DATE,
-    language_from: str = LANGUAGE_FROM,
-    language_to: str = LANGUAGE_TO,
+    source_lang: str = SOURCE_LANG,
+    target_lang: str = TARGET_LANG,
     n_concurrent: int = N_CONCURRENT,
     timeout: float = TIMEOUT,
     webhook_url: str = "",
@@ -59,8 +59,8 @@ def cmd_slack(
         keywords: Comma-separated keywords for a search.
         start_date: Start date for a search (inclusive).
         end_date: End date for a search (exclusive).
-        language_from: Language of original text in articles.
-        language_to: Language for translated text in articles.
+        source_lang: Language of original text in articles.
+        target_lang: Language of translated text in articles.
         n_concurrent: Number of simultaneous execution.
         timeout: Timeout for each post execution (in seconds).
         webhook_url: URL of Slack incoming webhook.
@@ -90,8 +90,8 @@ def cmd_slack(
     )
     translated = translate(
         articles,
-        language_from=language_from,
-        language_to=language_to,
+        source_lang=source_lang,
+        target_lang=target_lang,
         n_concurrent=n_concurrent,
         timeout=timeout,
     )

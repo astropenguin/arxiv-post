@@ -3,8 +3,8 @@ __all__ = [
     "KEYWORDS",
     "START_DATE",
     "END_DATE",
-    "LANGUAGE_FROM",
-    "LANGUAGE_TO",
+    "SOURCE_LANG",
+    "TARGET_LANG",
     "N_CONCURRENT",
     "TIMEOUT",
 ]
@@ -15,7 +15,7 @@ CATEGORIES = ("astro-ph.*",)
 KEYWORDS = ()
 START_DATE = "3 days ago at midnight in UTC"
 END_DATE = "2 days ago at midnight in UTC"
-LANGUAGE_FROM = "en"
-LANGUAGE_TO = "auto"
+SOURCE_LANG = "en"
+TARGET_LANG = "en"
 N_CONCURRENT = 5
 TIMEOUT = 30.0
