@@ -3,13 +3,13 @@ __all__ = ["translate"]
 
 # standard library
 from asyncio import gather, sleep, run
-from enum import Enum, auto
 from logging import getLogger
 from textwrap import shorten
-from typing import Iterable, List, Protocol, TypeVar, Union
+from typing import Iterable, List, Protocol, TypeVar
 
 
 # dependencies
+from deepl import Language
 from more_itertools import divide, flatten
 from playwright.async_api import Page, async_playwright
 
@@ -29,48 +29,6 @@ from .consts import (
 DEEPL_INPUT = "textarea.lmt__source_textarea"
 DEEPL_OUTPUT = "#target-dummydiv"
 DEEPL_TRANSLATOR = "https://deepl.com/translator"
-
-
-class Language(Enum):
-    """Available languages in the package."""
-
-    AUTO = auto()  #: Auto language detection
-    BG = auto()  #: Bulgarian
-    CS = auto()  #: Czech
-    DA = auto()  #: Danish
-    DE = auto()  #: German
-    EL = auto()  #: Greek
-    EN = auto()  #: English
-    ES = auto()  #: Spanish
-    ET = auto()  #: Estonian
-    FI = auto()  #: Finnish
-    FR = auto()  #: French
-    HU = auto()  #: Hungarian
-    IT = auto()  #: Italian
-    JA = auto()  #: Japanese
-    LT = auto()  #: Lithuanian
-    LV = auto()  #: Latvian
-    NL = auto()  #: Dutch
-    PL = auto()  #: Polish
-    PT = auto()  #: Portuguese
-    RO = auto()  #: Romanian
-    RU = auto()  #: Russian
-    SK = auto()  #: Slovak
-    SL = auto()  #: Slovenian
-    SV = auto()  #: Swedish
-    ZH = auto()  #: Chinese
-
-    @classmethod
-    def from_str(cls, string: str) -> "Language":
-        """Convert a string to a language."""
-        return getattr(cls, string.upper())
-
-    def to_str(self) -> str:
-        """Convert a language to a string."""
-        return self.name
-
-    def __str__(self) -> str:
-        return self.to_str()
 
 
 # logger
@@ -97,8 +55,8 @@ TL = TypeVar("TL", bound=Translatable)
 # runtime functions
 def translate(
     translatables: Iterable[TL],
-    target_lang: Union[Language, str] = TARGET_LANG,
-    source_lang: Union[Language, str] = SOURCE_LANG,
+    target_lang: str = TARGET_LANG,
+    source_lang: str = SOURCE_LANG,
     deepl_mode: DeepLMode = DEEPL_MODE,
     deepl_api_key: str = "",
     n_concurrent: int = N_CONCURRENT,
@@ -119,6 +77,12 @@ def translate(
         Translated objects.
 
     """
+    target_lang = parse_language(target_lang)
+    source_lang = parse_language(source_lang)
+
+    if source_lang == target_lang:
+        return list(translatables)
+
     return run(
         async_translate(
             translatables,
@@ -130,20 +94,25 @@ def translate(
     )
 
 
+def parse_language(lang: str) -> str:
+    """Parse and format a language string."""
+    if (lang := lang.lower()) in vars(Language).values():
+        return lang
+
+    try:
+        return getattr(Language, lang.upper())
+    except AttributeError:
+        raise ValueError(f"{lang!r} is not supported.")
+
+
 async def async_translate(
     translatables: Iterable[TL],
-    target_lang: Union[Language, str],
-    source_lang: Union[Language, str],
+    target_lang: str,
+    source_lang: str,
     n_concurrent: int,
     timeout: float,
 ) -> List[TL]:
     """Async version of the translate function."""
-    if isinstance(target_lang, str):
-        target_lang = Language.from_str(target_lang)
-
-    if isinstance(source_lang, str):
-        source_lang = Language.from_str(source_lang)
-
     if source_lang == target_lang:
         return list(translatables)
 
