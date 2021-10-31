@@ -84,9 +84,9 @@ def post(articles: Sequence[Article], webhook_url: str, dry_run: bool) -> None:
             if not dry_run:
                 _post(webhook_url, json=payload)
 
-            logger.debug(f"Posted an article ({article.arxiv_url})")
+            logger.debug(f"Posted an article: {article.arxiv_url}")
         except TOMLDecodeError:
-            logger.warn(f"Failed to post an article ({article.arxiv_url})")
+            logger.warn(f"Failed to post an article: {article.arxiv_url}")
 
 
 def to_payload(article: Article) -> Dict[str, Any]:

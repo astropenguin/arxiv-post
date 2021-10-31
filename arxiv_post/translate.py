@@ -4,6 +4,8 @@ __all__ = ["translate"]
 # standard library
 from asyncio import gather, sleep, run
 from enum import Enum, auto
+from logging import getLogger
+from textwrap import shorten
 from typing import Iterable, List, Protocol, TypeVar, Union
 
 
@@ -64,8 +66,11 @@ class Language(Enum):
         return self.to_str()
 
 
+# logger
+logger = getLogger(__name__)
+
+
 # type hints
-S = TypeVar("S")
 T = TypeVar("T")
 
 
@@ -79,17 +84,17 @@ class Translatable(Protocol):
         ...
 
 
-U = TypeVar("U", bound=Translatable)
+TL = TypeVar("TL", bound=Translatable)
 
 
 # runtime functions
 def translate(
-    translatables: Iterable[U],
+    translatables: Iterable[TL],
     language_to: Union[Language, str] = LANGUAGE_TO,
     language_from: Union[Language, str] = LANGUAGE_FROM,
     n_concurrent: int = N_CONCURRENT,
     timeout: float = TIMEOUT,
-) -> List[U]:
+) -> List[TL]:
     """Translate objects written in one language to another.
 
     Args:
@@ -115,12 +120,12 @@ def translate(
 
 
 async def async_translate(
-    translatables: Iterable[U],
+    translatables: Iterable[TL],
     language_to: Union[Language, str],
     language_from: Union[Language, str],
     n_concurrent: int,
     timeout: float,
-) -> List[U]:
+) -> List[TL]:
     """Async version of the translate function."""
     if isinstance(language_to, str):
         language_to = Language.from_str(language_to)
@@ -136,13 +141,13 @@ async def async_translate(
         context = await browser.new_context()
         context.set_default_timeout(1e3 * timeout)
 
-        async def div_translate(trs: Iterable[U]) -> List[U]:
+        async def div_translate(tls: Iterable[TL]) -> List[TL]:
             page = await context.new_page()
             url = f"{DEEPL_TRANSLATOR}#{language_from}/{language_to}/"
 
             try:
                 await page.goto(url)
-                return [await _translate(tr, page, timeout) for tr in trs]
+                return [await _translate(tl, page, timeout) for tl in tls]
             finally:
                 await page.close()
 
@@ -153,7 +158,7 @@ async def async_translate(
             await browser.close()
 
 
-async def _translate(translatable: U, page: Page, timeout: float) -> U:
+async def _translate(translatable: TL, page: Page, timeout: float) -> TL:
     """Translate an object by a translator page."""
     if not (original := str(translatable)):
         return translatable
@@ -172,4 +177,5 @@ async def _translate(translatable: U, page: Page, timeout: float) -> U:
 
         return translatable.replace(original, content)
 
+    logger.warn(f"Failed to translate: {shorten(original, 50)!r}")
     return translatable

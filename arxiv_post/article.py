@@ -39,7 +39,7 @@ class Article:
     def from_arxiv_result(cls, result: Result) -> "Article":
         return Article(
             title=result.title,
-            authors=[a.name for a in result.authors],  # type: ignore
+            authors=[a.name for a in result.authors],
             summary=result.summary,
             arxiv_url=str(result),
         )

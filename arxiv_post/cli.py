@@ -4,7 +4,7 @@ from typing import Sequence
 
 
 # dependencies
-from fire import Fire  # type: ignore
+from fire import Fire
 
 
 # submodules
@@ -19,8 +19,8 @@ from .constants import (
     N_CONCURRENT,
     TIMEOUT,
 )
-from .translate import translate
 from .search import search
+from .translate import translate
 
 
 # logger
@@ -80,7 +80,7 @@ def cmd_slack(
         keywords = keywords.split(",")
 
     for name, value in locals().items():
-        logger.debug(f"{name}={value!r}")
+        logger.debug(f"{name}: {value!r}")
 
     articles = search(
         categories=categories,
@@ -99,6 +99,6 @@ def cmd_slack(
     return slack.post(translated, webhook_url, dry_run)
 
 
-def cli() -> None:
+def main() -> None:
     """Entry point of command line interface."""
     Fire(dict(slack=cmd_slack))
