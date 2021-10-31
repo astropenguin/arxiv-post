@@ -16,36 +16,36 @@ from ..article import Article
 
 
 # constants
-PAYLOAD_TOML = """
-text = "{header}"
+PAYLOAD_TOML = '''
+text = """{header}"""
 
 [[blocks]]
 type = "header"
 
 [blocks.text]
 type = "plain_text"
-text = "{header}"
+text = """{header}"""
 
 [[blocks]]
 type = "section"
 
 [blocks.text]
 type = "mrkdwn"
-text = "*Titie:* {title}"
+text = """*Titie:* {title}"""
 
 [[blocks]]
 type = "section"
 
 [blocks.text]
 type = "mrkdwn"
-text = "*Authors:* {authors}"
+text = """*Authors:* {authors}"""
 
 [[blocks]]
 type = "section"
 
 [blocks.text]
 type = "mrkdwn"
-text = "*Summary:* {summary}"
+text = """*Summary:* {summary}"""
 
 [[blocks]]
 type = "actions"
@@ -53,7 +53,7 @@ type = "actions"
 [[blocks.elements]]
 type = "button"
 action_id = "view_arxiv"
-url = "{arxiv_url}"
+url = """{arxiv_url}"""
 
 [blocks.elements.text]
 type = "plain_text"
@@ -62,12 +62,12 @@ text = "View arXiv"
 [[blocks.elements]]
 type = "button"
 action_id = "view_pdf"
-url = "{arxiv_pdf_url}"
+url = """{arxiv_pdf_url}"""
 
 [blocks.elements.text]
 type = "plain_text"
 text = "View PDF"
-"""
+'''
 
 
 # logger
