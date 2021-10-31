@@ -5,7 +5,7 @@ __all__ = ["translate"]
 from asyncio import gather, sleep, run
 from logging import getLogger
 from textwrap import shorten
-from typing import Iterable, List, Literal, Sequence, Protocol, TypeVar, cast
+from typing import Iterable, List, Sequence, Protocol, TypeVar, cast
 
 
 # dependencies
@@ -84,7 +84,7 @@ def translate(
         return list(translatables)
 
     if deepl_mode == "auto":
-        deepl_mode = choose_deepl_mode(translatables, deepl_api_key)
+        deepl_mode = get_deepl_mode(translatables, deepl_api_key)
 
     if deepl_mode == "api":
         return translate_by_api(**locals())
@@ -92,40 +92,6 @@ def translate(
         return translate_by_browser(**locals())
     else:
         raise ValueError(f"{deepl_mode!r} is not supported.")
-
-
-def parse_language(lang: str) -> str:
-    """Parse and format a language string."""
-    if (lang := lang.lower()) in vars(Language).values():
-        return lang
-
-    try:
-        return getattr(Language, lang.upper())
-    except AttributeError:
-        raise ValueError(f"{lang!r} is not supported.")
-
-
-def choose_deepl_mode(
-    translatables: Sequence[TL],
-    deepl_api_key: str,
-) -> Literal["api", "browser"]:
-    """Choose translation mode of DeepL."""
-    if not deepl_api_key:
-        return "browser"
-
-    try:
-        deepl = Translator(deepl_api_key)
-        usage = deepl.get_usage().character
-    except AuthorizationException:
-        return "browser"
-
-    if not (usage.count is None or usage.limit is None):
-        total = sum(len(str(tl)) for tl in translatables)
-
-        if usage.limit - usage.count < total:
-            return "browser"
-
-    return "api"
 
 
 def translate_by_api(
@@ -209,3 +175,35 @@ async def _translate(translatable: TL, page: Page, timeout: float) -> TL:
 
     logger.warn(f"Failed to translate: {shorten(original, 50)!r}")
     return translatable
+
+
+def parse_language(lang: str) -> str:
+    """Parse and format a language string."""
+    if (lang := lang.lower()) in vars(Language).values():
+        return lang
+
+    try:
+        return getattr(Language, lang.upper())
+    except AttributeError:
+        raise ValueError(f"{lang!r} is not supported.")
+
+
+def get_deepl_mode(translatables: Iterable[TL], deepl_api_key: str) -> DeepLMode:
+    """Choose translation mode of DeepL."""
+    if not deepl_api_key:
+        return "browser"
+
+    try:
+        deepl = Translator(deepl_api_key)
+        usage = deepl.get_usage().character
+    except AuthorizationException:
+        return "browser"
+
+    if not (usage.count is None or usage.limit is None):
+        sources = map(str, translatables)
+
+        if (rest := usage.limit - usage.count) < sum(map(len, sources)):
+            logger.debug(f"Number of character(s) left: {rest}")
+            return "browser"
+
+    return "api"
