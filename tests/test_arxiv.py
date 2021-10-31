@@ -1,5 +1,5 @@
 # dependencies
-from arxiv_post.search import search
+from arxiv_post.arxiv import search
 
 
 # constants

@@ -9,6 +9,7 @@ from fire import Fire
 
 # submodules
 from .apps import slack
+from .arxiv import search
 from .constants import (
     CATEGORIES,
     KEYWORDS,
@@ -20,7 +21,6 @@ from .constants import (
     TIMEOUT,
 )
 from .deepl import translate
-from .search import search
 
 
 # logger
