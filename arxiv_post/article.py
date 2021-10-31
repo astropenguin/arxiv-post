@@ -7,11 +7,9 @@ from typing import List, Optional
 
 
 # dependencies
-from arxiv import Result  # type: ignore
-
-
-# submodules
-from .detex import detex
+import re
+from arxiv import Result
+from pylatexenc.latex2text import LatexNodes2Text
 
 
 # constants
@@ -52,3 +50,10 @@ class Article:
 
     def __str__(self) -> str:
         return f"{self.title}\n{TITLE_SUMMARY_DIV}\n{self.summary}"
+
+
+# runtime functions
+def detex(text: str) -> str:
+    """Remove TeX's control commands from a text."""
+    text = re.sub(r"(\n+\s*|\n*\s+)", " ", text)
+    return LatexNodes2Text().latex_to_text(text)
