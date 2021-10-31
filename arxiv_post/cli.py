@@ -52,6 +52,7 @@ def cmd_slack(
     source_lang: str = SOURCE_LANG,
     target_lang: str = TARGET_LANG,
     deepl_mode: DeepLMode = DEEPL_MODE,
+    deepl_api_key: str = "",
     n_concurrent: int = N_CONCURRENT,
     timeout: float = TIMEOUT,
     webhook_url: str = "",
@@ -68,6 +69,7 @@ def cmd_slack(
         source_lang: Language of original text in articles.
         target_lang: Language of translated text in articles.
         deepl_mode: Translation mode of DeepL.
+        deepl_api_key: Authentication Key for DeepL API.
         n_concurrent: Number of simultaneous execution.
         timeout: Timeout for each post execution (in seconds).
         webhook_url: URL of Slack incoming webhook.
@@ -100,6 +102,7 @@ def cmd_slack(
         source_lang=source_lang,
         target_lang=target_lang,
         deepl_mode=deepl_mode,
+        deepl_api_key=deepl_api_key,
         n_concurrent=n_concurrent,
         timeout=timeout,
     )

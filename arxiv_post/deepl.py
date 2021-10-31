@@ -100,6 +100,7 @@ def translate(
     target_lang: Union[Language, str] = TARGET_LANG,
     source_lang: Union[Language, str] = SOURCE_LANG,
     deepl_mode: DeepLMode = DEEPL_MODE,
+    deepl_api_key: str = "",
     n_concurrent: int = N_CONCURRENT,
     timeout: float = TIMEOUT,
 ) -> List[TL]:
@@ -110,6 +111,7 @@ def translate(
         target_lang: Language of the translated objects.
         source_lang: Language of the original objects.
         deepl_mode: Translation mode of DeepL.
+        deepl_api_key: Authentication Key for DeepL API.
         n_concurrent: Number of concurrent translation.
         timeout: Timeout for translation per object (in seconds).
 
