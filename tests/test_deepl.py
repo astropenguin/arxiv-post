@@ -1,5 +1,5 @@
 # dependencies
-from arxiv_post.translate import Language, translate
+from arxiv_post.deepl import translate
 
 
 # constants
@@ -9,4 +9,4 @@ TEXT_JA = "これはテストスクリプトです。"
 
 # test functions
 def test_translate() -> None:
-    assert translate([TEXT_EN], Language.JA) == [TEXT_JA]
+    assert translate([TEXT_EN], "ja") == [TEXT_JA]

@@ -185,6 +185,17 @@ optional = false
 python-versions = ">=3.5"
 
 [[package]]
+name = "deepl"
+version = "1.2.1"
+description = "Python library for the DeepL API."
+category = "main"
+optional = false
+python-versions = ">=3.6.2,<4"
+
+[package.dependencies]
+requests = ">=2,<3"
+
+[[package]]
 name = "docutils"
 version = "0.17.1"
 description = "Docutils -- Python Documentation Utilities"
@@ -859,7 +870,7 @@ python-versions = ">=3.7"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "f2bf01d2f085772066ebf6daeeff2d5c75dc1ed33c5b760284ae7fffa6a653a5"
+content-hash = "500c83682ae015864040624c5c4efefcff6723ca4908091e52b6d797203168fb"
 
 [metadata.files]
 alabaster = [
@@ -939,6 +950,10 @@ dateparser = [
 decorator = [
     {file = "decorator-5.1.0-py3-none-any.whl", hash = "sha256:7b12e7c3c6ab203a29e157335e9122cb03de9ab7264b137594103fd4a683b374"},
     {file = "decorator-5.1.0.tar.gz", hash = "sha256:e59913af105b9860aa2c8d3272d9de5a56a4e608db9a2f167a8480b323d529a7"},
+]
+deepl = [
+    {file = "deepl-1.2.1-py3-none-any.whl", hash = "sha256:4a3fb948c1c10f09b2f604a449078ff647468d803d17d38b7f004c61d7f1d43f"},
+    {file = "deepl-1.2.1.tar.gz", hash = "sha256:f7efd38a1d0df3db77de56175109fdccf3f03a5481580e1d6e35c5be962c1b4b"},
 ]
 docutils = [
     {file = "docutils-0.17.1-py2.py3-none-any.whl", hash = "sha256:cf316c8370a737a022b72b56874f6602acf974a37a9fba42ec2876387549fc61"},

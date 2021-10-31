@@ -23,8 +23,8 @@ You need to [create a custom Slack app to get an URL of incoming webhook](https:
 ```shell
 $ arxiv-post slack --keywords deshima \
                    --categories astro-ph.IM \
-                   --language_to ja \
-                   --webhook_url <Slack webhook URL>
+                   --target_lang ja \
+                   --slack_webhook_url <Slack webhook URL>
 ```
 
 The posted article looks like this.
