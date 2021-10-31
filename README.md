@@ -16,7 +16,7 @@ $ playwright install chromium
 
 ## Usage
 
-After installation, command line interface, `arxiv-post`, is available, with which you can translate and post arXiv articles to various apps.
+After installation, command line interface `arxiv-post` is available, with which you can translate and post arXiv articles to various apps.
 Note that only `slack` app is currently available.
 You need to [create a custom Slack app to get an URL of incoming webhook](https://slack.com/help/articles/115005265063-Incoming-webhooks-for-Slack).
 
@@ -39,7 +39,7 @@ $ arxiv-post slack --help
 
 ## Example
 
-It would be nice to regularly run the command by GitHub Actions.
+It may be nice to regularly run the command by some automation tools such as GitHub Actions.
 Here is a live example in which daily (2 days ago) arXiv articles in [astro-ph.GA](https://arxiv.org/list/astro-ph.GA/new) and [astro-ph.IM](https://arxiv.org/list/astro-ph.IM/new) are posted to different channels of a Slack workspace.
 
 - [a-lab-nagoya/astro-ph-slack: Translate and post arXiv articles to Slack](https://github.com/a-lab-nagoya/astro-ph-slack)
@@ -47,4 +47,3 @@ Here is a live example in which daily (2 days ago) arXiv articles in [astro-ph.G
 ## References
 
 - [fkubota/Carrier-Owl: arxiv--> DeepL --> Slack](https://github.com/fkubota/Carrier-Owl): The arxiv-post package is highly inspired by their work.
-- [a-lab-nagoya/astro-ph-slack: Translate and post arXiv articles to Slack](https://github.com/a-lab-nagoya/astro-ph-slack): A live example using the arxiv-post package.
