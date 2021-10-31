@@ -8,5 +8,5 @@ from . import apps
 from . import arxiv
 from . import article
 from . import cli
-from . import constants
+from . import consts
 from . import deepl

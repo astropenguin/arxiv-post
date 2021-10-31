@@ -13,7 +13,7 @@ from dateparser import parse
 
 # submodules
 from .article import Article
-from .constants import CATEGORIES, KEYWORDS, START_DATE, END_DATE
+from .consts import CATEGORIES, KEYWORDS, START_DATE, END_DATE
 
 
 # constants

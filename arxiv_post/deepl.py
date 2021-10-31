@@ -15,7 +15,7 @@ from playwright.async_api import Page, async_playwright
 
 
 # submodules
-from .constants import LANGUAGE_FROM, LANGUAGE_TO, N_CONCURRENT, TIMEOUT
+from .consts import LANGUAGE_FROM, LANGUAGE_TO, N_CONCURRENT, TIMEOUT
 
 
 # constants
