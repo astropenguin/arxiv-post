@@ -85,6 +85,7 @@ def translate(
 
     if deepl_mode == "auto":
         deepl_mode = get_deepl_mode(translatables, deepl_api_key)
+        logger.debug(f"Selected translation mode of DeepL: {deepl_mode!r}")
 
     if deepl_mode == "api":
         return translate_by_api(**locals())
@@ -201,10 +202,10 @@ def get_deepl_mode(translatables: Iterable[TL], deepl_api_key: str) -> DeepLMode
         return "browser"
 
     if not (usage.count is None or usage.limit is None):
-        sources = map(str, translatables)
+        rest = usage.limit - usage.count
+        logger.debug(f"Number of character(s) left for translation: {rest}")
 
-        if (rest := usage.limit - usage.count) < sum(map(len, sources)):
-            logger.debug(f"Number of character(s) left: {rest}")
+        if rest < sum(map(len, map(str, translatables))):
             return "browser"
 
     return "api"
