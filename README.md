@@ -24,7 +24,7 @@ You need to [create a custom Slack app to get an URL of incoming webhook](https:
 $ arxiv-post slack --keywords deshima \
                    --categories astro-ph.IM \
                    --target_lang ja \
-                   --webhook_url <Slack webhook URL>
+                   --slack_webhook_url <Slack webhook URL>
 ```
 
 The posted article looks like this.

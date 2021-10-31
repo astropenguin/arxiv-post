@@ -75,14 +75,14 @@ logger = getLogger(__name__)
 
 
 # runtime functions
-def post(articles: Sequence[Article], webhook_url: str, dry_run: bool) -> None:
+def post(articles: Sequence[Article], slack_webhook_url: str, dry_run: bool) -> None:
     """Post articles to Slack."""
     for article in articles:
         try:
             payload = to_payload(article)
 
             if not dry_run:
-                _post(webhook_url, json=payload)
+                _post(slack_webhook_url, json=payload)
 
             logger.debug(f"Posted an article: {article.arxiv_url}")
         except TOMLDecodeError:

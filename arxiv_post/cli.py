@@ -55,7 +55,7 @@ def cmd_slack(
     deepl_api_key: str = "",
     n_concurrent: int = N_CONCURRENT,
     timeout: float = TIMEOUT,
-    webhook_url: str = "",
+    slack_webhook_url: str = "",
     dry_run: bool = False,
     debug: bool = False,
 ) -> None:
@@ -72,7 +72,7 @@ def cmd_slack(
         deepl_api_key: Authentication Key for DeepL API.
         n_concurrent: Number of simultaneous execution.
         timeout: Timeout for each post execution (in seconds).
-        webhook_url: URL of Slack incoming webhook.
+        slack_webhook_url: URL of Slack incoming webhook.
         dry_run: If True, articles are not posted to Slack.
         debug: If True, debug-level log messages are shown.
 
@@ -107,7 +107,7 @@ def cmd_slack(
         timeout=timeout,
     )
 
-    return slack.post(translated, webhook_url, dry_run)
+    return slack.post(translated, slack_webhook_url, dry_run)
 
 
 def main() -> None:
