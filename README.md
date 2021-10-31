@@ -11,6 +11,7 @@ Translate and post arXiv articles to various apps
 
 ```shell
 $ pip install arxiv-post
+$ playwright install chromium
 ```
 
 ## Usage
