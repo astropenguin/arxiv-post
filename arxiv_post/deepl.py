@@ -125,6 +125,7 @@ def translate_by_browser(
     **_,
 ) -> List[TL]:
     """Translate objects by the DeepL web translator."""
+    n_concurrent = min(n_concurrent, len(translatables))
     url = f"{DEEPL_TRANSLATOR}#{source_lang}/{target_lang}/"
 
     async def main() -> List[TL]:
