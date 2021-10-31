@@ -49,6 +49,7 @@ def cmd_slack(
     n_concurrent: int = N_CONCURRENT,
     timeout: float = TIMEOUT,
     webhook_url: str = "",
+    dry_run: bool = False,
     debug: bool = False,
 ) -> None:
     """Translate and post articles to Slack.
@@ -63,6 +64,7 @@ def cmd_slack(
         n_concurrent: Number of simultaneous execution.
         timeout: Timeout for each post execution (in seconds).
         webhook_url: URL of Slack incoming webhook.
+        dry_run: If True, articles are not posted to Slack.
         debug: If True, debug-level log messages are shown.
 
     Returns:
@@ -94,7 +96,7 @@ def cmd_slack(
         timeout=timeout,
     )
 
-    return slack.post(translated, webhook_url)
+    return slack.post(translated, webhook_url, dry_run)
 
 
 def cli() -> None:
