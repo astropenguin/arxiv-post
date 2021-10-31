@@ -3,7 +3,7 @@ name = "arxiv-post"
 version = "0.5.0"
 description = "Translate and post arXiv articles to various apps"
 authors = ["Akio Taniguchi <taniguchi@a.phys.nagoya-u.ac.jp>"]
-keywords = ["arxiv", "slack", "translation"]
+keywords = ["arxiv", "deepl", "slack", "translation"]
 license = "MIT"
 readme = "README.md"
 homepage = "https://github.com/astropenguin/arxiv-post/"
@@ -13,13 +13,13 @@ documentation = "https://astropenguin.github.io/arxiv-post/"
 python = "^3.8"
 arxiv = "^1.4"
 dateparser = "^1.1"
+deepl = "^1.2"
 fire = "^0.4"
 more-itertools = "^8.10"
 playwright = "^1.16"
 pylatexenc = "^2.10"
 requests = "^2.26"
 tomli = "^1.2"
-
 
 [tool.poetry.dev-dependencies]
 black = "^21.9b"
