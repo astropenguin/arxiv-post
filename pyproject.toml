@@ -30,7 +30,7 @@ pytest = "^6.2"
 sphinx = "^4.2"
 
 [tool.poetry.scripts]
-arxiv-post = "arxiv_post.cli:cli"
+arxiv-post = "arxiv_post.cli:main"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

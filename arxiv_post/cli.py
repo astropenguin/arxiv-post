@@ -99,6 +99,6 @@ def cmd_slack(
     return slack.post(translated, webhook_url, dry_run)
 
 
-def cli() -> None:
+def main() -> None:
     """Entry point of command line interface."""
     Fire(dict(slack=cmd_slack))
