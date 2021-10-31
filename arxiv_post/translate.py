@@ -4,6 +4,8 @@ __all__ = ["translate"]
 # standard library
 from asyncio import gather, sleep, run
 from enum import Enum, auto
+from logging import getLogger
+from textwrap import shorten
 from typing import Iterable, List, Protocol, TypeVar, Union
 
 
@@ -62,6 +64,10 @@ class Language(Enum):
 
     def __str__(self) -> str:
         return self.to_str()
+
+
+# logger
+logger = getLogger(__name__)
 
 
 # type hints
@@ -172,4 +178,5 @@ async def _translate(translatable: U, page: Page, timeout: float) -> U:
 
         return translatable.replace(original, content)
 
+    logger.warn(f"Failed to translate: {shorten(original, 50)!r}")
     return translatable

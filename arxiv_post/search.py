@@ -2,6 +2,7 @@ __all__ = ["search"]
 
 
 # standard library
+from logging import getLogger
 from typing import Generator, Sequence
 
 
@@ -17,6 +18,10 @@ from .constants import CATEGORIES, KEYWORDS, START_DATE, END_DATE
 
 # constants
 ARXIV_DATE_FORMAT = "%Y%m%d%H%M%S"
+
+
+# logger
+logger = getLogger(__name__)
 
 
 # runtime functions
@@ -50,6 +55,8 @@ def search(
     if keywords:
         sub = " OR ".join(f'abs:"{kwd}"' for kwd in keywords)
         query += f" AND ({sub})"
+
+    logger.debug(f"Searched articles by: {query!r}")
 
     for result in Search(query).results():
         yield Article.from_arxiv_result(result)

@@ -80,7 +80,7 @@ def cmd_slack(
         keywords = keywords.split(",")
 
     for name, value in locals().items():
-        logger.debug(f"{name}={value!r}")
+        logger.debug(f"{name}: {value!r}")
 
     articles = search(
         categories=categories,
