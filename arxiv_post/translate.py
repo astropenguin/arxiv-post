@@ -3,6 +3,7 @@ __all__ = ["translate"]
 
 # standard library
 from asyncio import gather, sleep, run
+from enum import Enum, auto
 from typing import Iterable, List, Protocol, TypeVar, Union
 
 
@@ -12,13 +13,55 @@ from playwright.async_api import Page, async_playwright
 
 
 # submodules
-from .constants import LANGUAGE_FROM, LANGUAGE_TO, N_CONCURRENT, TIMEOUT, Language
+from .constants import LANGUAGE_FROM, LANGUAGE_TO, N_CONCURRENT, TIMEOUT
 
 
 # constants
 DEEPL_INPUT = "textarea.lmt__source_textarea"
 DEEPL_OUTPUT = "#target-dummydiv"
 DEEPL_TRANSLATOR = "https://deepl.com/translator"
+
+
+class Language(Enum):
+    """Available languages in the package."""
+
+    AUTO = auto()  #: Auto language detection
+    BG = auto()  #: Bulgarian
+    CS = auto()  #: Czech
+    DA = auto()  #: Danish
+    DE = auto()  #: German
+    EL = auto()  #: Greek
+    EN = auto()  #: English
+    ES = auto()  #: Spanish
+    ET = auto()  #: Estonian
+    FI = auto()  #: Finnish
+    FR = auto()  #: French
+    HU = auto()  #: Hungarian
+    IT = auto()  #: Italian
+    JA = auto()  #: Japanese
+    LT = auto()  #: Lithuanian
+    LV = auto()  #: Latvian
+    NL = auto()  #: Dutch
+    PL = auto()  #: Polish
+    PT = auto()  #: Portuguese
+    RO = auto()  #: Romanian
+    RU = auto()  #: Russian
+    SK = auto()  #: Slovak
+    SL = auto()  #: Slovenian
+    SV = auto()  #: Swedish
+    ZH = auto()  #: Chinese
+
+    @classmethod
+    def from_str(cls, string: str) -> "Language":
+        """Convert a string to a language."""
+        return getattr(cls, string.upper())
+
+    def to_str(self) -> str:
+        """Convert a language to a string."""
+        return self.name
+
+    def __str__(self) -> str:
+        return self.to_str()
 
 
 # type hints
@@ -60,12 +103,6 @@ def translate(
         Translated objects.
 
     """
-    if isinstance(language_to, str):
-        language_to = Language.from_str(language_to)
-
-    if isinstance(language_from, str):
-        language_from = Language.from_str(language_from)
-
     return run(
         async_translate(
             translatables,
@@ -79,12 +116,18 @@ def translate(
 
 async def async_translate(
     translatables: Iterable[U],
-    language_to: Language,
-    language_from: Language,
+    language_to: Union[Language, str],
+    language_from: Union[Language, str],
     n_concurrent: int,
     timeout: float,
 ) -> List[U]:
     """Async version of the translate function."""
+    if isinstance(language_to, str):
+        language_to = Language.from_str(language_to)
+
+    if isinstance(language_from, str):
+        language_from = Language.from_str(language_from)
+
     if language_from == language_to:
         return list(translatables)
 
