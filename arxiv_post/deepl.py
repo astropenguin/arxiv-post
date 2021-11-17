@@ -77,6 +77,9 @@ def translate(
         Translated objects.
 
     """
+    if not translatables:
+        return list(translatables)
+
     target_lang = parse_language(target_lang)
     source_lang = parse_language(source_lang)
 
