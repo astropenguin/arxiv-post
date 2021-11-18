@@ -3,7 +3,7 @@ __all__ = ["search"]
 
 # standard library
 from logging import getLogger
-from typing import Generator, Sequence
+from typing import List, Sequence
 
 
 # dependencies
@@ -30,7 +30,7 @@ def search(
     keywords: Sequence[str] = KEYWORDS,
     start_date: str = START_DATE,
     end_date: str = END_DATE,
-) -> Generator[Article, None, None]:
+) -> List[Article]:
     """Search for articles in arXiv.
 
     Args:
@@ -39,7 +39,7 @@ def search(
         start_date: Start date of the search.
         end_date: End date of the search.
 
-    Yields:
+    Returns:
         Articles found with given conditions.
 
     """
@@ -57,9 +57,9 @@ def search(
         query += f" AND ({sub})"
 
     logger.debug(f"Searched articles by: {query!r}")
-
-    for result in Search(query).results():
-        yield Article.from_arxiv_result(result)
+    results = list(Search(query).results())
+    logger.debug(f"Number of articles found: {len(results)}")
+    return list(map(Article.from_arxiv_result, results))
 
 
 def format_date(date_like: str) -> str:

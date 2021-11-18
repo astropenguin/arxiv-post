@@ -98,7 +98,7 @@ def cmd_slack(
         end_date=end_date,
     )
     translated = translate(
-        list(articles),
+        articles,
         source_lang=source_lang,
         target_lang=target_lang,
         deepl_mode=deepl_mode,
