@@ -12,5 +12,5 @@ N_ARTICLES = 4
 
 # test functions
 def test_search() -> None:
-    articles = list(search(CATEGORIES, KEYWORDS, START_DATE, END_DATE))
+    articles = search(CATEGORIES, KEYWORDS, START_DATE, END_DATE)
     assert len(articles) == N_ARTICLES
