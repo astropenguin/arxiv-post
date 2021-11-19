@@ -31,8 +31,6 @@ jobs:
           playwright install chromium
       - name: Test code's formatting (Black)
         run: black --check ${TARGET_DIRS}
-      - name: Test code's style (Flake8)
-        run: flake8 ${TARGET_DIRS}
       - name: Test code's execution (pytest)
         run: pytest -v tests
       - name: Test docs' build (Sphinx)
