@@ -1,6 +1,6 @@
 # flake8: noqa
 __author__ = "Akio Taniguchi"
-__version__ = "0.6.2"
+__version__ = "0.6.3"
 
 
 # submodules
