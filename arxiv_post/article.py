@@ -56,4 +56,4 @@ class Article:
 def detex(text: str) -> str:
     """Remove TeX's control commands from a text."""
     text = re.sub(r"(\n+\s*|\n*\s+)", " ", text)
-    return LatexNodes2Text().latex_to_text(text)
+    return LatexNodes2Text(keep_comments=True).latex_to_text(text)
