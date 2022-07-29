@@ -15,6 +15,7 @@
     "settings": {
         "files.insertFinalNewline": true,
         "files.trimTrailingWhitespace": true,
+        "python.analysis.typeCheckingMode": "basic",
         "python.formatting.provider": "black",
         "python.languageServer": "Pylance",
         "[python]": {

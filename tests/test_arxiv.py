@@ -7,10 +7,15 @@ CATEGORIES = ("astro-ph.GA",)
 KEYWORDS = ("galaxy",)
 START_DATE = "2021-01-01 in UTC"
 END_DATE = "2021-01-02 in UTC"
-N_ARTICLES = 4
+EXPECTED_URLS = [
+    "http://arxiv.org/abs/2101.00188v2",
+    "http://arxiv.org/abs/2101.00158v1",
+    "http://arxiv.org/abs/2101.00253v3",
+    "http://arxiv.org/abs/2101.00283v1",
+]
 
 
 # test functions
 def test_search() -> None:
     articles = search(CATEGORIES, KEYWORDS, START_DATE, END_DATE)
-    assert len(articles) == N_ARTICLES
+    assert [a.arxiv_url for a in articles] == EXPECTED_URLS

@@ -1,6 +1,6 @@
 # Project information
 author = "Akio Taniguchi"
-copyright = "2021 Akio Taniguchi"
+copyright = "2021-2022 Akio Taniguchi"
 
 
 # General configuration
@@ -17,9 +17,12 @@ exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 
 # Options for HTML output
 html_static_path = ["_static"]
-html_logo = "_static/logo.svg"
 html_theme = "pydata_sphinx_theme"
 html_theme_options = {
+    "logo": {
+        "image_light": "logo-light.svg",
+        "image_dark": "logo-dark.svg",
+    },
     "github_url": "https://github.com/astropenguin/arxiv-post/",
     "twitter_url": "https://twitter.com/astropengu_in/",
 }

@@ -1,11 +1,12 @@
 # arxiv-post
 
-[![PyPI](https://img.shields.io/pypi/v/arxiv-post.svg?label=PyPI&style=flat-square)](https://pypi.org/project/arxiv-post/)
-[![Python](https://img.shields.io/pypi/pyversions/arxiv-post.svg?label=Python&color=yellow&style=flat-square)](https://pypi.org/project/arxiv-post/)
-[![Test](https://img.shields.io/github/workflow/status/astropenguin/arxiv-post/Test?logo=github&label=Test&style=flat-square)](https://github.com/astropenguin/arxiv-post/actions)
-[![License](https://img.shields.io/badge/license-MIT-blue.svg?label=License&style=flat-square)](LICENSE)
+[![Release](https://img.shields.io/pypi/v/arxiv-post?label=Release&color=cornflowerblue&style=flat-square)](https://pypi.org/project/arxiv-post/)
+[![Python](https://img.shields.io/pypi/pyversions/arxiv-post?label=Python&color=cornflowerblue&style=flat-square)](https://pypi.org/project/arxiv-post/)
+[![Downloads](https://img.shields.io/pypi/dm/arxiv-post?label=Downloads&color=cornflowerblue&style=flat-square)](https://pepy.tech/project/arxiv-post)
+[![DOI](https://img.shields.io/badge/DOI-10.5281/zenodo.6127352-cornflowerblue?style=flat-square)](https://doi.org/10.5281/zenodo.6127352)
+[![Tests](https://img.shields.io/github/workflow/status/astropenguin/arxiv-post/Tests?label=Tests&style=flat-square)](https://github.com/astropenguin/arxiv-post/actions)
 
-Translate and post arXiv articles to various apps
+Translate and post arXiv articles to Slack and various apps
 
 ## Installation
 
@@ -16,7 +17,7 @@ $ playwright install chromium
 
 ## Usage
 
-After installation, command line interface `arxiv-post` is available, with which you can translate and post arXiv articles to various apps.
+Command line interface `arxiv-post` is available after installation, with which you can translate and post arXiv articles to various apps.
 Note that only `slack` app is currently available.
 You need to [create a custom Slack app to get an URL of incoming webhook](https://slack.com/help/articles/115005265063-Incoming-webhooks-for-Slack).
 
@@ -39,8 +40,8 @@ $ arxiv-post slack --help
 
 ## Example
 
-It may be nice to regularly run the command by some automation tools such as GitHub Actions.
-Here is a live example in which daily (2 days ago) arXiv articles in [astro-ph.GA](https://arxiv.org/list/astro-ph.GA/new) and [astro-ph.IM](https://arxiv.org/list/astro-ph.IM/new) are posted to different channels of a Slack workspace.
+It would be nice to regularly run the command by some automation tools such as GitHub Actions.
+Here is a live example where daily arXiv articles in [astro-ph.GA](https://arxiv.org/list/astro-ph.GA/new), [astro-ph.IM](https://arxiv.org/list/astro-ph.IM/new), and [astro-ph.HE](https://arxiv.org/list/astro-ph.HE/new) are posted to different channels of a Slack workspace.
 
 - [a-lab-nagoya/astro-ph-slack: Translate and post arXiv articles to Slack](https://github.com/a-lab-nagoya/astro-ph-slack)
 
