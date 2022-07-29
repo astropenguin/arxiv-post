@@ -5,7 +5,7 @@
 [![Test](https://img.shields.io/github/workflow/status/astropenguin/arxiv-post/Test?logo=github&label=Test&style=flat-square)](https://github.com/astropenguin/arxiv-post/actions)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg?label=License&style=flat-square)](LICENSE)
 
-Translate and post arXiv articles to various apps
+Translate and post arXiv articles to Slack and various apps
 
 ## Installation
 
