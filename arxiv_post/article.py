@@ -12,10 +12,6 @@ from arxiv import Result
 from pylatexenc.latex2text import LatexNodes2Text
 
 
-# constants
-TITLE_SUMMARY_DIV = "+" * 16
-
-
 # dataclasses
 @dataclass
 class Article:
@@ -45,11 +41,11 @@ class Article:
         )
 
     def replace(self, original: str, translated: str) -> "Article":
-        title, summary = translated.split(TITLE_SUMMARY_DIV)
+        title, summary = translated.split("\n", 1)
         return replace(self, title=title, summary=summary, original=self)
 
     def __str__(self) -> str:
-        return f"{self.title}\n{TITLE_SUMMARY_DIV}\n{self.summary}"
+        return f"{self.title}\n{self.summary}"
 
 
 # runtime functions
