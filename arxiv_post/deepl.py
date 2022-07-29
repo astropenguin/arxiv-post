@@ -42,7 +42,7 @@ T = TypeVar("T")
 class Translatable(Protocol):
     """Type hint for translatable objects."""
 
-    def replace(self: T, original: str, translated: str) -> T:
+    def replace(self: T, original: str, translated: str, /) -> T:
         ...
 
     def __str__(self) -> str:
@@ -176,7 +176,10 @@ async def _translate(translatable: TL, page: Page, timeout: float) -> TL:
         if not (content := content.strip()):
             continue
 
-        return translatable.replace(original, content)
+        try:
+            return translatable.replace(original, content)
+        except ValueError:
+            break
 
     logger.warn(f"Failed to translate: {shorten(original, 50)!r}")
     return translatable
