@@ -42,7 +42,7 @@ T = TypeVar("T")
 class Translatable(Protocol):
     """Type hint for translatable objects."""
 
-    def replace(self: T, original: str, translated: str) -> T:
+    def replace(self: T, original: str, translated: str, /) -> T:
         ...
 
     def __str__(self) -> str:
