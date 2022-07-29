@@ -1,0 +1,5 @@
+#!/bin/sh
+
+poetry install
+playwright install-deps
+playwright install chromium
