@@ -10,27 +10,27 @@ on:
 
 jobs:
   job:
-    name: Test (Python ${{ matrix.python-version }})
+    name: Test (Python ${{ matrix.python }})
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: ["3.8", "3.9", "3.10"]
     env:
       POETRY_VIRTUALENVS_CREATE: false
-      TARGET_DIRS: arxiv_post docs tests
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ["3.8", "3.9", "3.10", "3.11"]
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-python@v2
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
         with:
-          python-version: ${{ matrix.python-version }}
-      - name: Install dependencies
+          python-version: ${{ matrix.python }}
+      - name: Install project dependencies
         run: |
           pip install poetry
           poetry install
           playwright install chromium
       - name: Test code's formatting (Black)
-        run: black --check ${TARGET_DIRS}
+        run: black --check arxiv_post docs tests
       - name: Test code's execution (pytest)
         run: pytest -v tests
-      - name: Test docs' build (Sphinx)
+      - name: Test docs' building (Sphinx)
         run: docs/build
