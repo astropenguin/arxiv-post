@@ -2,6 +2,7 @@ __all__ = ["translate"]
 
 
 # standard library
+import re
 from asyncio import gather, sleep, run
 from logging import getLogger
 from textwrap import shorten
@@ -26,8 +27,10 @@ from .consts import (
 
 
 # constants
-DEEPL_INPUT = "textarea.lmt__source_textarea"
-DEEPL_OUTPUT = "#target-dummydiv"
+DEEPL_SOURCE_DIV = "data-testid=translator-source-input"
+DEEPL_SOURCE_BOX = "role=textbox"
+DEEPL_TARGET_DIV = "data-testid=translator-target-input"
+DEEPL_TARGET_BOX = "role=textbox"
 DEEPL_TRANSLATOR = "https://deepl.com/translator"
 
 
@@ -161,27 +164,32 @@ def translate_by_browser(
 
 async def _translate(translatable: TL, page: Page, timeout: float) -> TL:
     """Translate an object in a page of a browser."""
-    if not (original := str(translatable)):
+    if not (source := str(translatable)):
         return translatable
 
-    await page.fill(DEEPL_INPUT, "")
-    await page.fill(DEEPL_INPUT, original)
+    source_box = page.locator(DEEPL_SOURCE_DIV).locator(DEEPL_SOURCE_BOX)
+    target_box = page.locator(DEEPL_TARGET_DIV).locator(DEEPL_TARGET_BOX)
+
+    await source_box.fill("")
+    await source_box.fill(source)
 
     for _ in range(int(timeout / 0.5)):
         await sleep(0.5)
 
-        if (content := await page.text_content(DEEPL_OUTPUT)) is None:
+        if (target := await target_box.inner_text()) is None:
             continue
 
-        if not (content := content.strip()):
+        if not (target := target.strip()):
             continue
+
+        target = re.sub("\n+", "\n", target)
 
         try:
-            return translatable.replace(original, content)
+            return translatable.replace(source, target)
         except ValueError:
             break
 
-    logger.warn(f"Failed to translate: {shorten(original, 50)!r}")
+    logger.warn(f"Failed to translate: {shorten(source, 50)!r}")
     return translatable
 
 
