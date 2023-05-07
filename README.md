@@ -3,7 +3,7 @@
 [![Release](https://img.shields.io/pypi/v/arxiv-post?label=Release&color=cornflowerblue&style=flat-square)](https://pypi.org/project/arxiv-post/)
 [![Python](https://img.shields.io/pypi/pyversions/arxiv-post?label=Python&color=cornflowerblue&style=flat-square)](https://pypi.org/project/arxiv-post/)
 [![Downloads](https://img.shields.io/pypi/dm/arxiv-post?label=Downloads&color=cornflowerblue&style=flat-square)](https://pepy.tech/project/arxiv-post)
-[![DOI](https://img.shields.io/badge/DOI-10.5281/zenodo.6127352-cornflowerblue?style=flat-square)](https://doi.org/10.5281/zenodo.6127352)
+[![DOI](https://img.shields.io/badge/DOI-10.5281/zenodo.5633924-cornflowerblue?style=flat-square)](https://doi.org/10.5281/zenodo.5633924)
 [![Tests](https://img.shields.io/github/actions/workflow/status/astropenguin/arxiv-post/tests.yml?label=Tests&style=flat-square)](https://github.com/astropenguin/arxiv-post/actions)
 
 Translate and post arXiv articles to Slack and various apps
