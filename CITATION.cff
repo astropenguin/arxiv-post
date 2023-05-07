@@ -1,0 +1,15 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+
+title: "arxiv-post"
+abstract: "Translate and post arXiv articles to Slack and various apps"
+version: 0.7.0
+date-released: 2023-05-08
+license: "MIT"
+doi: "10.5281/zenodo.5633924"
+url: "https://github.com/astropenguin/arxiv-post"
+authors:
+  - given-names: "Akio"
+    family-names: "Taniguchi"
+    affiliation: "Nagoya University"
+    orcid: "https://orcid.org/0000-0002-9695-6183"
