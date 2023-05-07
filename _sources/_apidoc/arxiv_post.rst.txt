@@ -1,0 +1,30 @@
+arxiv\_post package
+===================
+
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   arxiv_post.apps
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   arxiv_post.article
+   arxiv_post.arxiv
+   arxiv_post.cli
+   arxiv_post.consts
+   arxiv_post.deepl
+
+Module contents
+---------------
+
+.. automodule:: arxiv_post
+   :members:
+   :undoc-members:
+   :show-inheritance:

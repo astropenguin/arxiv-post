@@ -1,0 +1,7 @@
+arxiv\_post.apps.slack module
+=============================
+
+.. automodule:: arxiv_post.apps.slack
+   :members:
+   :undoc-members:
+   :show-inheritance:

@@ -1,0 +1,7 @@
+arxiv\_post.article module
+==========================
+
+.. automodule:: arxiv_post.article
+   :members:
+   :undoc-members:
+   :show-inheritance:

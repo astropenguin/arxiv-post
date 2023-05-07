@@ -1,0 +1,7 @@
+arxiv\_post.cli module
+======================
+
+.. automodule:: arxiv_post.cli
+   :members:
+   :undoc-members:
+   :show-inheritance:

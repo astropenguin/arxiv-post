@@ -1,0 +1,18 @@
+arxiv\_post.apps package
+========================
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   arxiv_post.apps.slack
+
+Module contents
+---------------
+
+.. automodule:: arxiv_post.apps
+   :members:
+   :undoc-members:
+   :show-inheritance:
